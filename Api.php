@@ -99,7 +99,7 @@ class Api
 
         $opts[CURLOPT_URL] = $url;
         $opts[CURLOPT_TIMEOUT] = 100;
-        $opts[CURLOPT_USERAGENT] = 'Datatrics/API '.$self->version;
+        $opts[CURLOPT_USERAGENT] = 'Datatrics/API '.$this->version;
         $opts[CURLOPT_SSL_VERIFYPEER] = true;
         $opts[CURLOPT_RETURNTRANSFER] = true;
         $ch = curl_init();
