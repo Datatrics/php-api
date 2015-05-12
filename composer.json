@@ -1,0 +1,30 @@
+{
+    "name": "datatrics/php-api",
+    "type": "component",
+    "description": "PHP api for datatrics",
+    "keywords": ["api", "datatrics"],
+    "homepage": "http://www.datatrics.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nico Borghuis",
+            "email": "nico@datatrics.com"
+        },
+        {
+          "name": "Bas Nieland",
+          "email": "bas@datatrics.com"
+        },
+        {
+          "name": "Pepijn Yben",
+          "email": "pepijn@datatrics.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+		"ext-curl": "*",
+		"ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": { "Datatrics\\Api\\": "" }
+    }
+}
