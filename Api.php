@@ -49,13 +49,22 @@ class Api
     private $apiKey;
 
     /**
+     * The API will use this as the default project id.
+     *
+     * @var string
+     */
+    private $projectId;
+
+    /**
      * Create a new API instance.
      *
      * @param string $apiKey
+     * @param string $projectId
      */
-    public function __construct($apiKey)
+    public function __construct($apiKey, $projectId = null)
     {
         $this->setApiKey($apiKey);
+        $this->setProjectId($projectId);
     }
 
     /**
@@ -136,6 +145,10 @@ class Api
      */
     public function GET($method, $action, $query = array())
     {
+        if (!isset($query['projectid']) && !is_null($this->projectId)) {
+            $query['projectid'] = $this->getProjectId();
+        }
+
         $query['apikey'] = $this->getApiKey();
         $url = $this->getEndpoint($method, $action, $query);
         $opts = array();
@@ -156,6 +169,10 @@ class Api
      */
     public function POST($method, $action, $query = array())
     {
+        if (!isset($query['projectid']) && !is_null($this->projectId)) {
+            $query['projectid'] = $this->getProjectId();
+        }
+
         $query['apikey'] = $this->getApiKey();
         $url = $this->getEndpoint($method, $action);
         $opts = array(
@@ -190,5 +207,25 @@ class Api
     public function setApiKey($apiKey)
     {
         $this->apiKey = $apiKey;
+    }
+
+    /**
+     * Get the default project id.
+     *
+     * @return string
+     */
+    public function getProjectId()
+    {
+        return $this->projectId;
+    }
+
+    /**
+     * Set the default project id.
+     *
+     * @param string $projectId
+     */
+    public function setProjectId($projectId)
+    {
+        $this->projectId = $projectId;
     }
 }
