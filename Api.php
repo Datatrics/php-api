@@ -11,7 +11,7 @@
 
 namespace Datatrics\Api;
 
-/*
+/**
  * Api component
  *
  * @author Nico Borghuis <nico@datatrics.com>
@@ -228,4 +228,26 @@ class Api
     {
         $this->projectId = $projectId;
     }
+
+    /**
+     * Get the api url
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set the api url
+     *
+     * @param string $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
+
+
 }
