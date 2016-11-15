@@ -150,7 +150,8 @@ class Api
         }
 
         $query['apikey'] = $this->getApiKey();
-        $url = $this->getEndpoint($method, $action, $query);
+        $query = array_reverse($query);
+        $url = $this->getEndpoint($method, $action, $data);
         $opts = array();
 
         return $this->request($url, $opts, 'GET');
@@ -174,6 +175,7 @@ class Api
         }
 
         $query['apikey'] = $this->getApiKey();
+        $query = array_reverse($query);
         $url = $this->getEndpoint($method, $action);
         $opts = array(
             CURLOPT_POST => true,
@@ -248,6 +250,4 @@ class Api
     {
         $this->url = $url;
     }
-
-
 }
