@@ -151,7 +151,7 @@ class Api
 
         $query['apikey'] = $this->getApiKey();
         $query = array_reverse($query);
-        $url = $this->getEndpoint($method, $action, $data);
+        $url = $this->getEndpoint($method, $action, $query);
         $opts = array();
 
         return $this->request($url, $opts, 'GET');
