@@ -36,6 +36,14 @@ class Client
      * @var Modules\Apikey
      */
     public $Apikey;
+    /**
+     * @var Modules\Behavior
+     */
+    public $Behavior;
+    /**
+     * @var Modules\Box
+     */
+    public $Box;
 
     /**
      * Create a new API instance
@@ -95,5 +103,7 @@ class Client
     {
         $this->Profile = new Modules\Profile($this->api_key, $this->projectId);
         $this->Apikey = new Modules\Apikey($this->api_key);
+        $this->Behavior = new Modules\Behavior($this->api_key, $this->projectId);
+        $this->Box = new Modules\Box($this->api_key, $this->projectId);
     }
 }
