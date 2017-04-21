@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use Datatrics\API\Client;
 use Datatrics\API\Modules\Apikey;
 use Datatrics\API\Modules\Behavior;
