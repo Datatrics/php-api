@@ -29,9 +29,7 @@ use Datatrics\API\Modules\Trigger;
 use Datatrics\API\Modules\User;
 use Datatrics\API\Modules\Webhook;
 
-use PHPUnit\Framework\TestCase;
-
-class ClientTest extends TestCase
+class ClientTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetApiKey()
     {
