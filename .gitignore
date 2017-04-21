@@ -3,7 +3,7 @@ bin/
 composer.phar
 composer.lock
 .idea/
-
+.php_cs.cache
 *.phpproj
 *.sln
 *.suo

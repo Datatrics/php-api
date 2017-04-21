@@ -62,8 +62,9 @@ class Behavior extends Base
      */
     public function UpdateEvent($event)
     {
-        if(!isset($event['eventid']))
+        if (!isset($event['eventid'])) {
             throw new \Exception("event must contain a eventid");
+        }
 
         return $this->request(self::HTTP_PUT, "/event/".$event['eventid'], $profile);
     }
@@ -76,8 +77,9 @@ class Behavior extends Base
      */
     public function UpdateBulk($events)
     {
-        if (count($events) > 50)
+        if (count($events) > 50) {
             throw new \Exception("Maximum of 50 events allowed at a time");
+        }
 
         return $this->request(self::HTTP_POST, "/event/bulk", $events);
     }

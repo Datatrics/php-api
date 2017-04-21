@@ -52,8 +52,9 @@ class Profile extends Base
      */
     public function Update($profile)
     {
-        if(!isset($profile['profileid']))
+        if (!isset($profile['profileid'])) {
             throw new \Exception("profile must contain a profileid");
+        }
 
         return $this->request(self::HTTP_PUT, "/".$profile['profileid'], $profile);
     }
@@ -66,9 +67,10 @@ class Profile extends Base
      */
     public function UpdateBulk($profiles)
     {
-        if (count($profiles) > 50)
+        if (count($profiles) > 50) {
             throw new \Exception("Maximum of 50 profiles allowed at a time");
+        }
 
-        return $this->request(self::HTTP_POST, "/bulk", $profiles);
+        return $this->request(self::HTTP_POST, "/bulk", ['items' => $profiles]);
     }
 }

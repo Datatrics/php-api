@@ -76,8 +76,9 @@ class Box extends Base
      */
     public function Update($box)
     {
-        if(!isset($box['boxid']))
+        if (!isset($box['boxid'])) {
             throw new \Exception("box must contain a boxid");
+        }
 
         return $this->request(self::HTTP_PUT, "/".$box['boxid'], $box);
     }
@@ -91,8 +92,9 @@ class Box extends Base
      */
     public function UpdateVersion($boxid, $version)
     {
-        if(!isset($version['versionid']))
+        if (!isset($version['versionid'])) {
             throw new \Exception("version must contain a versionid");
+        }
 
         return $this->request(self::HTTP_PUT, "/".$boxid."/version/".$version['versionid'], $version);
     }

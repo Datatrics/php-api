@@ -12,7 +12,8 @@ class Base
     const HTTP_PUT = 'PUT';
     const HTTP_DELETE = 'DELETE';
 
-    protected function __construct($apikey, $endpoint) {
+    protected function __construct($apikey, $endpoint)
+    {
         $this->api_key = $apikey;
         $this->api_endpoint .= $endpoint;
     }
