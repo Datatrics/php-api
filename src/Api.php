@@ -87,6 +87,11 @@ class Client
     public $Journey;
 
     /**
+     * @var Modules\Link
+     */
+    public $Link;
+
+    /**
      * @var Modules\NextBestAction
      */
     public $NextBestAction;
@@ -230,6 +235,7 @@ class Client
         $this->Goal = new Modules\Goal($this->api_key, $this->projectId);
         $this->Interaction = new Modules\Interaction($this->api_key, $this->projectId);
         $this->Journey = new Modules\Journey($this->api_key, $this->projectId);
+        $this->Link = new Modules\Link($this->api_key, $this->projectId);
         $this->NextBestAction = new Modules\NextBestAction($this->api_key, $this->projectId);
         $this->Profile = new Modules\Profile($this->api_key, $this->projectId);
         $this->Project = new Modules\Project($this->api_key);
