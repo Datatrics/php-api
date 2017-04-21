@@ -33,11 +33,11 @@ use Datatrics\API\Modules\Webhook;
 
 use PHPUnit\Framework\TestCase;
 
-class ClientTest extends TestCase {
-
+class ClientTest extends TestCase
+{
     public function testGetApiKey()
     {
-        $client = new Client(1,2);
+        $client = new Client(1, 2);
         $this->assertEquals(
             '1',
             $client->GetApiKey()
@@ -46,7 +46,7 @@ class ClientTest extends TestCase {
 
     public function testGetProjectId()
     {
-        $client = new Client(1,2);
+        $client = new Client(1, 2);
         $this->assertEquals(
             '2',
             $client->GetProjectId()
@@ -55,7 +55,7 @@ class ClientTest extends TestCase {
 
     public function testSetApiKey()
     {
-        $client = new Client(1,2);
+        $client = new Client(1, 2);
         $client->SetApiKey(3);
         $this->assertEquals(
             '3',
@@ -65,7 +65,7 @@ class ClientTest extends TestCase {
 
     public function testSetProjectId()
     {
-        $client = new Client(1,2);
+        $client = new Client(1, 2);
         $client->SetProjectId(4);
         $this->assertEquals(
             '4',
