@@ -3,3 +3,8 @@ php:
   - '7.0'
   - '7.1'
 install: composer install
+addons:
+  code_climate:
+    repo_token: '9896ee3c188451d54ec89ec8e9f3332725ce8599343c090c2544b966a54b90b0'
+after_success:
+  - vendor/bin/test-reporter
