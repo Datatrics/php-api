@@ -66,7 +66,7 @@ class Behavior extends Base
             throw new \Exception("event must contain a eventid");
         }
 
-        return $this->request(self::HTTP_PUT, "/event/".$event['eventid'], $profile);
+        return $this->request(self::HTTP_PUT, "/event/".$event['eventid'], $event);
     }
 
     /**

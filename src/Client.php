@@ -158,7 +158,7 @@ class Client
     public $User;
 
     /**
-     * @var \Datatrics\API\Modules\Webook
+     * @var \Datatrics\API\Modules\Webhook
      */
     public $Webhook;
 
@@ -184,7 +184,7 @@ class Client
     }
 
     /**
-     * @param string $api_key
+     * @return string $api_key
      */
     public function GetApiKey()
     {

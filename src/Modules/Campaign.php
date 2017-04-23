@@ -59,15 +59,4 @@ class Campaign extends Base
     {
         return $this->request(self::HTTP_DELETE, "/".$campaignId);
     }
-
-    /**
-     * Update a box
-     * @param object Box containing the boxid and fields that need to be updated
-     * @throws \Exception When boxid is not present
-     * @return object Result of the request
-     */
-    public function Fields($campaignId)
-    {
-        return $this->request(self::HTTP_PUT, "/".$campaignId."/fields", $campaign);
-    }
 }
