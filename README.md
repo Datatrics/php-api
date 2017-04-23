@@ -3,6 +3,8 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/datatrics/php-api.svg)](https://packagist.org/packages/datatrics/php-api)
 [![Latest Unstable Version](http://img.shields.io/packagist/vpre/datatrics/php-api.svg)](https://packagist.org/packages/datatrics/php-api)
 [![Travis branch](https://img.shields.io/travis/datatrics/php-api/2.0.svg)](https://travis-ci.org/Datatrics/php-api)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Datatrics/php-api/badges/quality-score.png?b=2.0)](https://scrutinizer-ci.com/g/Datatrics/php-api/?branch=2.0)
+[![Code Coverage](https://scrutinizer-ci.com/g/Datatrics/php-api/badges/coverage.png?b=2.0)](https://scrutinizer-ci.com/g/Datatrics/php-api/?branch=2.0)
 [![Code Climate](https://img.shields.io/codeclimate/github/datatrics/php-api.svg)](https://codeclimate.com/repos/58fc98489c3fbc02860009e3)
 ![License](http://img.shields.io/badge/license-MIT-green.svg)
 
