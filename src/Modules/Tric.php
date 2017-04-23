@@ -56,7 +56,7 @@ class Tric extends Base
     }
 
     /**
-     * Delete a tric object by tric id
+     * Do a tric object by tric id
      * @param string Id of the tric
      * @return object Result of the request
      */

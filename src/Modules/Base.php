@@ -67,8 +67,6 @@ class Base
         return $this;
     }
 
-
-
     /**
      * Perform an http call. This method is used by the resource specific classes.
      *
@@ -110,8 +108,6 @@ class Base
             curl_setopt($ch, CURLOPT_POSTFIELDS, $http_body);
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-        //curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         $body = curl_exec($ch);
         if (curl_errno($ch) == CURLE_SSL_CACERT || curl_errno($ch) == CURLE_SSL_PEER_CERTIFICATE || curl_errno($ch) == 77 /* CURLE_SSL_CACERT_BADFILE (constant not defined in PHP though) */) {
             /*
