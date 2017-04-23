@@ -5,18 +5,69 @@ class Base
 {
     const CLIENT_VERSION = '2.0.0';
 
-    protected $api_endpoint = 'https://api.datatrics.com/2.0';
-    protected $api_key;
     const HTTP_GET = 'GET';
     const HTTP_POST = 'POST';
     const HTTP_PUT = 'PUT';
     const HTTP_DELETE = 'DELETE';
 
-    protected function __construct($apikey, $endpoint)
+    /**
+     * @var string
+     */
+    protected $api_endpoint = 'https://api.datatrics.com/2.0';
+
+    /**
+     * @var string
+     */
+    protected $api_key;
+
+    /**
+     * Base constructor.
+     * @param $apikey
+     * @param $endpoint
+     */
+    public function __construct($apikey, $endpoint)
     {
         $this->api_key = $apikey;
         $this->api_endpoint .= $endpoint;
     }
+
+    /**
+     * @return string
+     */
+    public function getApiEndpoint()
+    {
+        return $this->api_endpoint;
+    }
+
+    /**
+     * @param string $api_endpoint
+     * @return Base
+     */
+    public function setApiEndpoint($api_endpoint)
+    {
+        $this->api_endpoint = $api_endpoint;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->api_key;
+    }
+
+    /**
+     * @param string $api_key
+     * @return Base
+     */
+    public function setApiKey($api_key)
+    {
+        $this->api_key = $api_key;
+        return $this;
+    }
+
+
 
     /**
      * Perform an http call. This method is used by the resource specific classes.
