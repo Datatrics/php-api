@@ -1,5 +1,7 @@
 <?php
 
+namespace Datatrics\API;
+
 use Datatrics\API\Client;
 use Datatrics\API\Modules\Base;
 use Datatrics\API\Modules\Apikey;
