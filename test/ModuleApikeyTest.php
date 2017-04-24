@@ -34,13 +34,33 @@ use Datatrics\API\Modules\Webhook;
 
 class ModuleApikeyTest extends \PHPUnit\Framework\TestCase
 {
-    public function testRequest()
+    public function testGetExceptionMessage()
     {
-        /*
-        $Base = new Base(1,"/base");
-        $this->assertEquals(
-            'https://api.datatrics.com/2.0/get',
-            $Base->request("GET","/get", [])
-        );*/
+        $Client = new Client(1, 2);
+        $this->expectExceptionMessage('An authentication exception occurred.');
+        var_dump($Client->Apikey->Get());
+    }
+
+    public function testGetExceptioncode()
+    {
+        $Client = new Client(1, 2);
+        $this->expectExceptionCode(403);
+        var_dump($Client->Apikey->Get());
+    }
+
+    public function testCreateExceptionMessage()
+    {
+        $Client = new Client(1, 2);
+        $this->expectExceptionMessage('An authentication exception occurred.');
+        $ApiKey = [];
+        var_dump($Client->Apikey->Create($ApiKey));
+    }
+
+    public function testCreateExceptioncode()
+    {
+        $Client = new Client(1, 2);
+        $this->expectExceptionCode(403);
+        $ApiKey = [];
+        var_dump($Client->Apikey->Create($ApiKey));
     }
 }

@@ -68,71 +68,138 @@ class Base
     }
 
     /**
+     * @throws \Exception
+     */
+    public function checkApiKey()
+    {
+        if (empty($this->api_key)) {
+            throw new \Exception('You have not set an api key. Please use setApiKey() to set the API key.');
+        }
+    }
+
+    /**
+     * @param $url
+     * @param null|array $payload
+     * @return string
+     */
+    public function getUrl($url, $payload = null)
+    {
+        $url = $this->api_endpoint.$url;
+        if ($payload) {
+            $url .= "?".http_build_query($payload);
+        }
+        return $url;
+    }
+
+    /**
+     * @param int   $responseCode
+     * @param array $responseBody
+     *
+     * @throws \Exception
+     */
+    private function handleResponseError($responseCode, $responseBody)
+    {
+        $errorMessage = 'Unknown error: ' . $responseCode;
+
+        if ($responseBody && array_key_exists('error', $responseBody)) {
+            $errorMessage = $responseBody['error']['message'];
+        }
+        if ($responseBody && array_key_exists('message', $responseBody)) {
+            $errorMessage = $responseBody['message'];
+        }
+
+
+        throw new \Exception($errorMessage, $responseCode);
+    }
+
+    /**
+     * @param resource $curlHandle
+     *
+     * @throws \Exception
+     */
+    private function handleCurlError($curlHandle)
+    {
+        $errorMessage = 'Curl error: ' . curl_error($curlHandle);
+
+        throw new \Exception($errorMessage, curl_errno($curlHandle));
+    }
+
+    /**
      * Perform an http call. This method is used by the resource specific classes.
      *
-     * @param $http_method
-     * @param $api_method
-     * @param $http_body
+     * @param $method
+     * @param $url
+     * @param $payload
      *
      * @return string|object
      *
      * @throws \Exception
      */
-    public function request($http_method, $api_method, $http_body = null)
+    public function request($method, $url, $payload = null)
     {
-        if (empty($this->api_key)) {
-            throw new \Exception('You have not set an api key. Please use setApiKey() to set the API key.');
-        }
-        $url = $this->api_endpoint.$api_method;
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_ENCODING, '');
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        $user_agent = 'Datatrics Frontend '.self::CLIENT_VERSION;
+        $this->checkApiKey();
+
+        $user_agent = 'Datatrics php-api '.self::CLIENT_VERSION;
         $request_headers = array(
             'Accept: application/json',
-            'User-Agent: '.$user_agent,
             'X-apikey: '.$this->api_key,
-            'X-Client-Name: '.$user_agent,
-            'X-Datatrics-Client-Info: '.php_uname(),
+            'X-client-name: '.$user_agent,
+            'X-datatrics-client-info: '.php_uname(),
         );
-        if ($http_body !== null) {
-            $request_headers[] = 'Content-Type: application/json';
-            if ($http_method == self::HTTP_POST) {
-                curl_setopt($ch, CURLOPT_POST, 1);
-            } elseif ($http_method == self::HTTP_PUT) {
-                curl_setopt($ch, CURLOPT_PUT, 1);
-            } else {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $http_method);
+
+        if ($method == 'post' || $method == 'put') {
+            if (!$payload || !is_array($payload)) {
+                throw new \Exception('Invalid payload', 100);
             }
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $http_body);
+            $request_headers['Content-Type'] = 'application/json';
+            $curlOptions = array(
+                CURLOPT_URL           => $this->getUrl($url),
+                CURLOPT_CUSTOMREQUEST => strtoupper($method),
+                CURLOPT_POSTFIELDS    => json_encode($payload),
+            );
+        } elseif ($method == 'delete') {
+            $curlOptions = array(
+                CURLOPT_URL           => $this->getUrl($url),
+                CURLOPT_CUSTOMREQUEST => 'DELETE',
+            );
+        } else {
+            $curlOptions = array(
+                CURLOPT_URL => $this->getUrl($url, $payload),
+            );
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-        $body = curl_exec($ch);
-        if (curl_errno($ch) == CURLE_SSL_CACERT || curl_errno($ch) == CURLE_SSL_PEER_CERTIFICATE || curl_errno($ch) == 77 /* CURLE_SSL_CACERT_BADFILE (constant not defined in PHP though) */) {
-            /*
-             * On some servers, the list of installed certificates is outdated or not present at all (the ca-bundle.crt
-             * is not installed). So we tell cURL which certificates we trust. Then we retry the requests.
-             */
-            $request_headers[] = 'X-Datatrics-Debug: used shipped root certificates';
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-            curl_setopt($ch, CURLOPT_CAINFO, realpath(dirname(__FILE__).'/cacert.pem'));
-            $body = curl_exec($ch);
+
+        $curlOptions += array(
+            CURLOPT_HEADER         => false,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_USERAGENT      => $user_agent,
+            CURLOPT_SSLVERSION     => 6,
+            CURLOPT_HTTPHEADER     => $request_headers
+        );
+
+        $curlHandle = curl_init();
+
+        curl_setopt_array($curlHandle, $curlOptions);
+
+        $responseBody = curl_exec($curlHandle);
+
+        if (curl_errno($curlHandle)) {
+            $this->handleCurlError($curlHandle);
         }
-        if (strpos(curl_error($ch), "certificate subject name 'mollie.nl' does not match target host") !== false) {
-            /*
-             * On some servers, the wildcard SSL certificate is not processed correctly. This happens with OpenSSL 0.9.7
-             * from 2003.
-             */
-            $request_headers[] = 'X-Datatrics-Debug: old OpenSSL found';
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            $body = curl_exec($ch);
+
+        $responseBody = json_decode($responseBody, true);
+        $responseCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+
+        curl_close($curlHandle);
+
+
+        if ($responseCode < 200 || $responseCode > 299 || ($responseBody && array_key_exists('error', $responseBody))) {
+            $this->handleResponseError($responseCode, $responseBody);
         }
-        if (curl_errno($ch)) {
-            throw new \Exception('Unable to communicate with Datatrics ('.curl_errno($ch).'): '.curl_error($ch));
+        if ($responseCode < 200 || $responseCode > 299 || ($responseBody && array_key_exists('message', $responseBody))) {
+            $this->handleResponseError($responseCode, $responseBody);
         }
-        
-        return json_decode($body);
+
+        return $responseBody;
     }
 }
