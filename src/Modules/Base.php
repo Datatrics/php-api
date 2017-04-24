@@ -119,10 +119,10 @@ class Base
     {
         $errorMessage = 'Unknown error: ' . $responseCode;
 
-        if ($responseBody && array_key_exists('error', $responseBody)) {
+        if (!empty($responseBody) && array_key_exists('error', $responseBody)) {
             $errorMessage = $responseBody['error']['message'];
         }
-        if ($responseBody && array_key_exists('message', $responseBody)) {
+        if (!empty($responseBody) && array_key_exists('message', $responseBody)) {
             $errorMessage = $responseBody['message'];
         }
 
@@ -211,10 +211,10 @@ class Base
         curl_close($curlHandle);
 
 
-        if ($responseCode < 200 || $responseCode > 299 || ($responseBody && array_key_exists('error', $responseBody))) {
+        if ($responseCode < 200 || $responseCode > 299 || (!empty($responseBody) && array_key_exists('error', $responseBody))) {
             $this->handleResponseError($responseCode, $responseBody);
         }
-        if ($responseCode < 200 || $responseCode > 299 || ($responseBody && array_key_exists('message', $responseBody))) {
+        if ($responseCode < 200 || $responseCode > 299 || (!empty($responseBody) && array_key_exists('message', $responseBody))) {
             $this->handleResponseError($responseCode, $responseBody);
         }
 
