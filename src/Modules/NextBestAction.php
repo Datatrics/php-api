@@ -35,14 +35,16 @@ class NextBestAction extends Base
     }
 
     /**
-     * Create new nextbestaction
-     * @param id of the nextbestaction
+     * Update a nextbestaction
      * @param object Containing all the information of a nextbestaction
      * @return object Result of the request
      */
     public function Update($nextbestactionId, $nextbestaction)
     {
-        return $this->request(self::HTTP_PUT, "/".$nextbestactionId, $nextbestaction);
+        if (!isset($nextbestaction['nextbestactionid'])) {
+            throw new \Exception('nextbestaction must contain nextbestactionid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$nextbestaction['nextbestactionid'], $nextbestaction);
     }
 
     /**

@@ -30,7 +30,7 @@ use Datatrics\API\Modules\Trigger;
 use Datatrics\API\Modules\User;
 use Datatrics\API\Modules\Webhook;
 
-class ModuleBaseTest extends \PHPUnit_Framework_TestCase
+class ModuleApikeyTest extends \PHPUnit_Framework_TestCase
 {
     public function testRequest()
     {

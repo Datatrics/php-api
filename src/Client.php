@@ -1,6 +1,34 @@
 <?php
 namespace Datatrics\API;
 
+use Datatrics\API\Modules\Apikey;
+use Datatrics\API\Modules\Behavior;
+use Datatrics\API\Modules\Box;
+use Datatrics\API\Modules\Bucket;
+use Datatrics\API\Modules\Campaign;
+use Datatrics\API\Modules\Card;
+use Datatrics\API\Modules\Channel;
+use Datatrics\API\Modules\Content;
+use Datatrics\API\Modules\Geo;
+use Datatrics\API\Modules\Goal;
+use Datatrics\API\Modules\Interaction;
+use Datatrics\API\Modules\Journey;
+use Datatrics\API\Modules\Link;
+use Datatrics\API\Modules\NextBestAction;
+use Datatrics\API\Modules\Profile;
+use Datatrics\API\Modules\Project;
+use Datatrics\API\Modules\Sale;
+use Datatrics\API\Modules\Scorecard;
+use Datatrics\API\Modules\Segment;
+use Datatrics\API\Modules\Template;
+use Datatrics\API\Modules\Theme;
+use Datatrics\API\Modules\Touchpoint;
+use Datatrics\API\Modules\Tracker;
+use Datatrics\API\Modules\Tric;
+use Datatrics\API\Modules\Trigger;
+use Datatrics\API\Modules\User;
+use Datatrics\API\Modules\Webhook;
+
 class Client
 {
     /**
@@ -12,6 +40,7 @@ class Client
      * Version of the remote API.
      */
     protected $api_version = '2.0';
+
     /**
      * @var string
      */
@@ -22,143 +51,138 @@ class Client
      */
     private $projectId;
 
-    const HTTP_GET = 'GET';
-    const HTTP_POST = 'POST';
-    const HTTP_PUT = 'PUT';
-    const HTTP_DELETE = 'DELETE';
-
     /**
-     * @var \Datatrics\API\Modules\Apikey
+     * @var Apikey
      */
     public $Apikey;
 
     /**
-     * @var \Datatrics\API\Modules\Behavior
+     * @var Behavior
      */
     public $Behavior;
 
     /**
-     * @var \Datatrics\API\Modules\Box
+     * @var Box
      */
     public $Box;
 
     /**
-     * @var \Datatrics\API\Modules\Bucket
+     * @var Bucket
      */
     public $Bucket;
 
     /**
-     * @var \Datatrics\API\Modules\Campaign
+     * @var Campaign
      */
     public $Campaign;
 
     /**
-     * @var \Datatrics\API\Modules\Card
+     * @var Card
      */
     public $Card;
 
     /**
-     * @var \Datatrics\API\Modules\Channel
+     * @var Channel
      */
     public $Channel;
 
     /**
-     * @var \Datatrics\API\Modules\Content
+     * @var Content
      */
     public $Content;
 
     /**
-     * @var \Datatrics\API\Modules\Geo
+     * @var Geo
      */
     public $Geo;
 
     /**
-     * @var \Datatrics\API\Modules\Goal
+     * @var Goal
      */
     public $Goal;
 
     /**
-     * @var \Datatrics\API\Modules\Interaction
+     * @var Interaction
      */
     public $Interaction;
 
     /**
-     * @var \Datatrics\API\Modules\Journey
+     * @var Journey
      */
     public $Journey;
 
     /**
-     * @var \Datatrics\API\Modules\Link
+     * @var Link
      */
     public $Link;
 
     /**
-     * @var \Datatrics\API\Modules\NextBestAction
+     * @var NextBestAction
      */
     public $NextBestAction;
 
     /**
-     * @var \Datatrics\API\Modules\Profile
+     * @var Profile
      */
     public $Profile;
 
     /**
-     * @var \Datatrics\API\Modules\Project
+     * @var Project
      */
     public $Project;
 
     /**
-     * @var \Datatrics\API\Modules\Sale
+     * @var Sale
      */
     public $Sale;
 
     /**
-     * @var \Datatrics\API\Modules\Scorecard
+     * @var Scorecard
      */
     public $Scorecard;
 
     /**
-     * @var \Datatrics\API\Modules\Segment
+     * @var Segment
      */
     public $Segment;
 
     /**
-     * @var \Datatrics\API\Modules\Template
+     * @var Template
      */
     public $Template;
 
     /**
-     * @var \Datatrics\API\Modules\Theme
+     * @var Theme
      */
     public $Theme;
 
     /**
-     * @var \Datatrics\API\Modules\Touchpoint
+     * @var Touchpoint
      */
     public $Touchpoint;
 
     /**
-     * @var \Datatrics\API\Modules\Tracker
+     * @var Tracker
      */
     public $Tracker;
 
     /**
-     * @var \Datatrics\API\Modules\Tric
+     * @var Tric
      */
     public $Tric;
 
     /**
-     * @var \Datatrics\API\Modules\Trigger
+     * @var Trigger
      */
     public $Trigger;
 
     /**
-     * @var \Datatrics\API\Modules\User
+     * @var User
      */
     public $User;
 
     /**
-     * @var \Datatrics\API\Modules\Webhook
+     * @var Webhook
      */
     public $Webhook;
 
@@ -224,32 +248,32 @@ class Client
      */
     private function registerModules()
     {
-        $this->Apikey = new \Datatrics\API\Modules\Apikey($this->api_key);
-        $this->Behavior = new \Datatrics\API\Modules\Behavior($this->api_key, $this->projectId);
-        $this->Box = new \Datatrics\API\Modules\Box($this->api_key, $this->projectId);
-        $this->Bucket = new \Datatrics\API\Modules\Bucket($this->api_key, $this->projectId);
-        $this->Campaign = new \Datatrics\API\Modules\Campaign($this->api_key, $this->projectId);
-        $this->Card = new \Datatrics\API\Modules\Card($this->api_key, $this->projectId);
-        $this->Channel = new \Datatrics\API\Modules\Channel($this->api_key, $this->projectId);
-        $this->Content = new \Datatrics\API\Modules\Content($this->api_key, $this->projectId);
-        $this->Geo = new \Datatrics\API\Modules\Geo($this->api_key);
-        $this->Goal = new \Datatrics\API\Modules\Goal($this->api_key, $this->projectId);
-        $this->Interaction = new \Datatrics\API\Modules\Interaction($this->api_key, $this->projectId);
-        $this->Journey = new \Datatrics\API\Modules\Journey($this->api_key, $this->projectId);
-        $this->Link = new \Datatrics\API\Modules\Link($this->api_key, $this->projectId);
-        $this->NextBestAction = new \Datatrics\API\Modules\NextBestAction($this->api_key, $this->projectId);
-        $this->Profile = new \Datatrics\API\Modules\Profile($this->api_key, $this->projectId);
-        $this->Project = new \Datatrics\API\Modules\Project($this->api_key);
-        $this->Sale = new \Datatrics\API\Modules\Sale($this->api_key, $this->projectId);
-        $this->Scorecard = new \Datatrics\API\Modules\Scorecard($this->api_key, $this->projectId);
-        $this->Segment = new \Datatrics\API\Modules\Segment($this->api_key, $this->projectId);
-        $this->Template = new \Datatrics\API\Modules\Template($this->api_key, $this->projectId);
-        $this->Theme = new \Datatrics\API\Modules\Theme($this->api_key, $this->projectId);
-        $this->Touchpoint = new \Datatrics\API\Modules\Touchpoint($this->api_key, $this->projectId);
-        $this->Tracker = new \Datatrics\API\Modules\Tracker($this->api_key, $this->projectId);
-        $this->Tric = new \Datatrics\API\Modules\Tric($this->api_key, $this->projectId);
-        $this->Trigger = new \Datatrics\API\Modules\Trigger($this->api_key, $this->projectId);
-        $this->User = new \Datatrics\API\Modules\User($this->api_key, $this->projectId);
-        $this->Webhook = new \Datatrics\API\Modules\Webhook($this->api_key, $this->projectId);
+        $this->Apikey = new Apikey($this->api_key);
+        $this->Behavior = new Behavior($this->api_key, $this->projectId);
+        $this->Box = new Box($this->api_key, $this->projectId);
+        $this->Bucket = new Bucket($this->api_key, $this->projectId);
+        $this->Campaign = new Campaign($this->api_key, $this->projectId);
+        $this->Card = new Card($this->api_key, $this->projectId);
+        $this->Channel = new Channel($this->api_key, $this->projectId);
+        $this->Content = new Content($this->api_key, $this->projectId);
+        $this->Geo = new Geo($this->api_key);
+        $this->Goal = new Goal($this->api_key, $this->projectId);
+        $this->Interaction = new Interaction($this->api_key, $this->projectId);
+        $this->Journey = new Journey($this->api_key, $this->projectId);
+        $this->Link = new Link($this->api_key, $this->projectId);
+        $this->NextBestAction = new NextBestAction($this->api_key, $this->projectId);
+        $this->Profile = new Profile($this->api_key, $this->projectId);
+        $this->Project = new Project($this->api_key);
+        $this->Sale = new Sale($this->api_key, $this->projectId);
+        $this->Scorecard = new Scorecard($this->api_key, $this->projectId);
+        $this->Segment = new Segment($this->api_key, $this->projectId);
+        $this->Template = new Template($this->api_key, $this->projectId);
+        $this->Theme = new Theme($this->api_key, $this->projectId);
+        $this->Touchpoint = new Touchpoint($this->api_key, $this->projectId);
+        $this->Tracker = new Tracker($this->api_key, $this->projectId);
+        $this->Tric = new Tric($this->api_key, $this->projectId);
+        $this->Trigger = new Trigger($this->api_key, $this->projectId);
+        $this->User = new User($this->api_key, $this->projectId);
+        $this->Webhook = new Webhook($this->api_key, $this->projectId);
     }
 }

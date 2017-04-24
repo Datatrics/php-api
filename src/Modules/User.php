@@ -1,6 +1,8 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\Bundle\ProfileBundle\Controller\ProfileController;
+
 class User extends Base
 {
     /**
@@ -35,14 +37,17 @@ class User extends Base
     }
 
     /**
-     * Create new user
+     * Update a user
      * @param id of the user
      * @param object Containing all the information of a user
      * @return object Result of the request
      */
-    public function Update($userId, $user)
+    public function Update($user)
     {
-        return $this->request(self::HTTP_PUT, "/".$userId, $user);
+        if (!isset($user['userid'])) {
+            throw new \Exception('user must contain userid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$user['userid'], $user);
     }
 
     /**

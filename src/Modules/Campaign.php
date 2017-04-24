@@ -25,8 +25,20 @@ class Campaign extends Base
     }
 
     /**
+     * Get one or multiple lanes
+     * @param string campaign id
+     * @param string lane id, leave null for list of lanes
+     * @param object Containing query arguments
+     * @return object Result of the request
+     */
+    public function GetLane($campaignId, $laneId = null, $args = array("limit" => 50))
+    {
+        return $laneId == null ? $this->request(self::HTTP_GET, "/".$campaignId."/lane/?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$campaignId."/lane/".$laneId."?".http_build_query($args));
+    }
+
+    /**
      * Create new campaign
-     * @param object Containing all the information of a bucket
+     * @param object Containing all the information of a lane
      * @return object Result of the request
      */
     public function Create($campaign)
@@ -35,8 +47,19 @@ class Campaign extends Base
     }
 
     /**
-     * Update a box
-     * @param object Box containing the boxid and fields that need to be updated
+     * Create new lane
+     * @param string campaign id
+     * @param object Containing all the information of a lane
+     * @return object Result of the request
+     */
+    public function CreateLane($campaignId, $lane)
+    {
+        return $this->request(self::HTTP_POST, "/".$campaignId."/lane", $lane);
+    }
+
+    /**
+     * Update a campaign
+     * @param object campaign containing the campaign id and fields that need to be updated
      * @throws \Exception When boxid is not present
      * @return object Result of the request
      */
@@ -50,13 +73,49 @@ class Campaign extends Base
     }
 
     /**
+     * Update a lane
+     * @param string Id of the campaign
+     * @param object lane containing the laneid and fields that need to be updated
+     * @throws \Exception When boxid is not present
+     * @return object Result of the request
+     */
+    public function UpdateLane($campaignId, $lane)
+    {
+        if (!isset($lane['laneid'])) {
+            throw new \Exception("lane must contain a laneid");
+        }
+
+        return $this->request(self::HTTP_PUT, "/".$campaignId."/lane/".$lane['laneid'], $lane);
+    }
+
+    /**
      * Delete a campaign object by campaign id
-     * @param string Id of the bucket
-     * @param string Id of the object to be deleted
+     * @param string Id of the campaign
      * @return object Result of the request
      */
     public function Delete($campaignId)
     {
         return $this->request(self::HTTP_DELETE, "/".$campaignId);
+    }
+
+    /**
+     * Retrieve stats of a lane by campaign
+     * @param string Id of the campaign
+     * @return object Result of the request
+     */
+    public function Stats($campaignId)
+    {
+        return $this->request(self::HTTP_GET, "/".$campaignId."/stats");
+    }
+
+    /**
+     * Retrieve stats of a lane by campaign and lane id
+     * @param string Id of the campaign
+     * @param string Id of the lane to be deleted
+     * @return object Result of the request
+     */
+    public function StatsLane($campaignId, $laneId)
+    {
+        return $this->request(self::HTTP_GET, "/".$campaignId."/lane/".$laneId."/stats");
     }
 }

@@ -35,14 +35,16 @@ class Interaction extends Base
     }
 
     /**
-     * Create new interaction
-     * @param id of the interaction
+     * Update a interaction
      * @param object Containing all the information of a interaction
      * @return object Result of the request
      */
-    public function Update($interactionId, $interaction)
+    public function Update($interaction)
     {
-        return $this->request(self::HTTP_PUT, "/".$interactionId, $interaction);
+        if (!isset($interaction['interactionid'])) {
+            throw new \Exception("interaction must contain a interactionid");
+        }
+        return $this->request(self::HTTP_PUT, "/".$interaction['interactionid'], $interaction);
     }
 
     /**

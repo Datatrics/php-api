@@ -58,12 +58,33 @@ class Box extends Base
     }
 
     /**
+     * Create new box
+     * @param object Containing all the information of a box
+     * @return object Result of the request
+     */
+    public function CreateVersion($boxId, $version)
+    {
+        return $this->request(self::HTTP_POST, "/".$boxId."/version", $version);
+    }
+
+    /**
      * Delete a box version by version id
      * @param string Id of the box
      * @param string Id of the version to be deleted
      * @return object Result of the request
      */
     public function Delete($boxId, $versionId)
+    {
+        return $this->request(self::HTTP_DELETE, "/".$boxId);
+    }
+
+    /**
+     * Delete a box version by version id
+     * @param string Id of the box
+     * @param string Id of the version to be deleted
+     * @return object Result of the request
+     */
+    public function DeleteVersion($boxId, $versionId)
     {
         return $this->request(self::HTTP_DELETE, "/".$boxId."/version/".$versionId);
     }

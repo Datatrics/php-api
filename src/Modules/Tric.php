@@ -35,14 +35,17 @@ class Tric extends Base
     }
 
     /**
-     * Create new tric
+     * Update a tric
      * @param id of the tric
      * @param object Containing all the information of a tric
      * @return object Result of the request
      */
-    public function Update($tricId, $tric)
+    public function Update($tric)
     {
-        return $this->request(self::HTTP_PUT, "/".$tricId, $tric);
+        if (!isset($tric['tricid'])) {
+            throw new \Exception('tric must contain tricid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$tric['tricid'], $tric);
     }
 
     /**
@@ -56,11 +59,11 @@ class Tric extends Base
     }
 
     /**
-     * Do a tric object by tric id
+     * Do a tric object by tric id.
      * @param string Id of the tric
      * @return object Result of the request
      */
-    public function Do($tricId)
+    public function Run($tricId)
     {
         return $this->request(self::HTTP_GET, "/".$tricId);
     }

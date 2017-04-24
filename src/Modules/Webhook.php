@@ -15,9 +15,9 @@ class Webhook extends Base
 
     /**
      * Trigger a Datatrics webhooke
-     * @param string channel
-     * @param string type
-     * @param object Containing payload data
+     * @param string $channel
+     * @param string $type
+     * @param object $webhook payload data
      * @return object Result of the request
      */
     public function Send($channel, $type, $webhook)

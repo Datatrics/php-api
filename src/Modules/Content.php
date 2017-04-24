@@ -41,13 +41,27 @@ class Content extends Base
 
     /**
      * Create new content
-     * @param id of the content
      * @param object Containing all the information of a content
+     * @throws \Exception When contentid, source, type or itemtype is not present
      * @return object Result of the request
      */
-    public function Update($contentId, $content)
+    public function Update($content)
     {
-        return $this->request(self::HTTP_PUT, "/".$contentId, $content);
+        if (!isset($content['contentid'])) {
+            throw new \Exception("content must contain a contentid");
+        }
+        if (!isset($content['source'])) {
+            throw new \Exception("content must contain a source");
+        }
+        if (!isset($content['type'])) {
+            throw new \Exception("content must contain a type");
+        }
+        if ($content['type'] == 'item') {
+            if (!isset($content['itemtype'])) {
+                throw new \Exception("content must contain a itemtype");
+            }
+        }
+        return $this->request(self::HTTP_PUT, "/".$content['contentid'], $content);
     }
 
     /**
@@ -60,6 +74,14 @@ class Content extends Base
         if ($contentId) {
             if (!isset($args['source'])) {
                 throw new \Exception('Source is required');
+            }
+            if (!isset($args['type'])) {
+                throw new \Exception("Type is required");
+            }
+            if ($args['type'] == 'item') {
+                if (!isset($args['itemtype'])) {
+                    throw new \Exception("Itemtype is required");
+                }
             }
         }
         return $this->request(self::HTTP_DELETE, "/".$contentId."?".http_build_query($args));

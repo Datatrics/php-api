@@ -35,13 +35,15 @@ class Card extends Base
     }
 
     /**
-     * Create new card
-     * @param id of the card
+     * Update a card
      * @param object Containing all the information of a card
      * @return object Result of the request
      */
-    public function Update($cardId, $card)
+    public function Update($card)
     {
-        return $this->request(self::HTTP_PUT, "/".$cardId, $card);
+        if (!isset($card['cardid'])) {
+            throw new \Exception("card must contain a cardid");
+        }
+        return $this->request(self::HTTP_PUT, "/".$card['cardid'], $card);
     }
 }

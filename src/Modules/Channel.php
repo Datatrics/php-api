@@ -40,9 +40,12 @@ class Channel extends Base
      * @param object Containing all the information of a channel
      * @return object Result of the request
      */
-    public function Update($channelId, $channel)
+    public function Update($channel)
     {
-        return $this->request(self::HTTP_PUT, "/".$channelId, $channel);
+        if (!isset($channel['channelid'])) {
+            throw new \Exception("channel must contain a channelid");
+        }
+        return $this->request(self::HTTP_PUT, "/".$channel['channelid'], $channel);
     }
 
     /**

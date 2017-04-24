@@ -34,14 +34,18 @@ class Project extends Base
     }
 
     /**
-     * Create new project
+     * Update a project
      * @param id of the project
      * @param object Containing all the information of a project
+     * @throws \Exception when projectid is missing
      * @return object Result of the request
      */
-    public function Update($projectId, $project)
+    public function Update($project)
     {
-        return $this->request(self::HTTP_PUT, "/".$projectId, $project);
+        if (!isset($project['projectid'])) {
+            throw new \Exception("project must contain a projectid");
+        }
+        return $this->request(self::HTTP_PUT, "/".$project['projectid'], $project);
     }
 
     /**

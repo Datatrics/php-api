@@ -35,14 +35,16 @@ class Journey extends Base
     }
 
     /**
-     * Create new journey
-     * @param id of the journey
+     * Update a journey
      * @param object Containing all the information of a journey
      * @return object Result of the request
      */
-    public function Update($journeyId, $journey)
+    public function Update($journey)
     {
-        return $this->request(self::HTTP_PUT, "/".$journeyId, $journey);
+        if (!isset($journey['journeyid'])) {
+            throw new \Exception('journey must contain journeyid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$journey['journeyid'], $journey);
     }
 
     /**
@@ -53,5 +55,15 @@ class Journey extends Base
     public function Delete($journeyId)
     {
         return $this->request(self::HTTP_DELETE, "/".$journeyId);
+    }
+
+    /**
+     * Retrieve stats of a journey by journey id
+     * @param string Id of the journey
+     * @return object Result of the request
+     */
+    public function Stats($journeyId)
+    {
+        return $this->request(self::HTTP_GET, "/".$journeyId."/stats");
     }
 }

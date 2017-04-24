@@ -35,13 +35,16 @@ class Segment extends Base
     }
 
     /**
-     * Create new segment
+     * Update a segment
      * @param id of the segment
      * @param object Containing all the information of a segment
      * @return object Result of the request
      */
-    public function Update($segmentId, $segment)
+    public function Update($segment)
     {
-        return $this->request(self::HTTP_PUT, "/".$segmentId, $segment);
+        if (!isset($segment['segmentid'])) {
+            throw new \Exception('segment must contain segmentid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$segment['segmentid'], $segment);
     }
 }

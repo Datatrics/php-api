@@ -35,14 +35,17 @@ class Touchpoint extends Base
     }
 
     /**
-     * Create new touchpoint
+     * Update a touchpoint
      * @param id of the touchpoint
      * @param object Containing all the information of a touchpoint
      * @return object Result of the request
      */
-    public function Update($touchpointId, $touchpoint)
+    public function Update($touchpoint)
     {
-        return $this->request(self::HTTP_PUT, "/".$touchpointId, $touchpoint);
+        if (!isset($touchpoint['touchpointid'])) {
+            throw new \Exception('touchpoint must contain touchpointid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$touchpoint['touchpointid'], $touchpoint);
     }
 
     /**

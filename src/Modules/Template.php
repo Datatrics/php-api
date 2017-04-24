@@ -35,14 +35,17 @@ class Template extends Base
     }
 
     /**
-     * Create new template
+     * Update a template
      * @param id of the template
      * @param object Containing all the information of a template
      * @return object Result of the request
      */
-    public function Update($templateId, $template)
+    public function Update($template)
     {
-        return $this->request(self::HTTP_PUT, "/".$templateId, $template);
+        if (!isset($template['templateid'])) {
+            throw new \Exception('template must contain templateid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$template['templateid'], $template);
     }
 
     /**

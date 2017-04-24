@@ -34,7 +34,7 @@ class Base
     /**
      * @return string
      */
-    public function getApiEndpoint()
+    protected function getApiEndpoint()
     {
         return $this->api_endpoint;
     }
@@ -43,7 +43,7 @@ class Base
      * @param string $api_endpoint
      * @return Base
      */
-    public function setApiEndpoint($api_endpoint)
+    protected function setApiEndpoint($api_endpoint)
     {
         $this->api_endpoint = $api_endpoint;
         return $this;
@@ -52,7 +52,7 @@ class Base
     /**
      * @return string
      */
-    public function getApiKey()
+    protected function getApiKey()
     {
         return $this->api_key;
     }
@@ -61,7 +61,7 @@ class Base
      * @param string $api_key
      * @return Base
      */
-    public function setApiKey($api_key)
+    protected function setApiKey($api_key)
     {
         $this->api_key = $api_key;
         return $this;
@@ -74,7 +74,7 @@ class Base
      * @param $api_method
      * @param $http_body
      *
-     * @return string
+     * @return string|object
      *
      * @throws \Exception
      */

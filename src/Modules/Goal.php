@@ -40,9 +40,12 @@ class Goal extends Base
      * @param object Containing all the information of a goal
      * @return object Result of the request
      */
-    public function Update($goalId, $goal)
+    public function Update($goal)
     {
-        return $this->request(self::HTTP_PUT, "/".$goalId, $goal);
+        if (!isset($goal['goalid'])) {
+            throw new \Exception('goal must contain goalid');
+        }
+        return $this->request(self::HTTP_PUT, "/".$goal['goalid'], $goal);
     }
 
     /**
