@@ -39,7 +39,7 @@ class NextBestAction extends Base
      * @param object Containing all the information of a nextbestaction
      * @return object Result of the request
      */
-    public function Update($nextbestactionId, $nextbestaction)
+    public function Update($nextbestaction)
     {
         if (!isset($nextbestaction['nextbestactionid'])) {
             throw new \Exception('nextbestaction must contain nextbestactionid');

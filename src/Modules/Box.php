@@ -73,7 +73,7 @@ class Box extends Base
      * @param string Id of the version to be deleted
      * @return object Result of the request
      */
-    public function Delete($boxId, $versionId)
+    public function Delete($boxId)
     {
         return $this->request(self::HTTP_DELETE, "/".$boxId);
     }
