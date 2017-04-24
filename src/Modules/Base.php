@@ -3,11 +3,29 @@ namespace Datatrics\API\Modules;
 
 class Base
 {
-    const CLIENT_VERSION = '2.0.0';
+    /**
+     * @const Client version
+     */
+    const CLIENT_VERSION = '2.0';
 
+    /**
+     * @const HTTP Method GET
+     */
     const HTTP_GET = 'GET';
+
+    /**
+     * @const HTTP Method POST
+     */
     const HTTP_POST = 'POST';
+
+    /**
+     * @const HTTP Method PUT
+     */
     const HTTP_PUT = 'PUT';
+
+    /**
+     * @const HTTP Method DELETE
+     */
     const HTTP_DELETE = 'DELETE';
 
     /**
@@ -139,7 +157,7 @@ class Base
     {
         $this->checkApiKey();
 
-        $user_agent = 'Datatrics php-api '.self::CLIENT_VERSION;
+        $user_agent = 'Datatrics/API '.self::CLIENT_VERSION;
         $request_headers = array(
             'Accept: application/json',
             'X-apikey: '.$this->api_key,
