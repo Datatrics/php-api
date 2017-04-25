@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Journey extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/journey");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/journey");
     }
 
     /**
@@ -21,7 +23,10 @@ class Journey extends Base
      */
     public function Get($journeyId = null, $args = array("limit" => 50))
     {
-        return $journeyId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$journeyId."?".http_build_query($args));
+        if (is_null($journeyId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$journeyId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Journey extends Base
      */
     public function Create($journey)
     {
-        return $this->request(self::HTTP_POST, "", $journey);
+        return $this->GetClient()->Post($this->GetUrl(), $journey);
     }
 
     /**
@@ -44,7 +49,7 @@ class Journey extends Base
         if (!isset($journey['journeyid'])) {
             throw new \Exception('journey must contain journeyid');
         }
-        return $this->request(self::HTTP_PUT, "/".$journey['journeyid'], $journey);
+        return $this->GetClient()->Put($this->GetUrl()."/".$journey['journeyid'], $journey);
     }
 
     /**
@@ -54,7 +59,7 @@ class Journey extends Base
      */
     public function Delete($journeyId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$journeyId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$journeyId);
     }
 
     /**
@@ -64,6 +69,6 @@ class Journey extends Base
      */
     public function Stats($journeyId)
     {
-        return $this->request(self::HTTP_GET, "/".$journeyId."/stats");
+        return $this->GetClient()->Get($this->GetUrl()."/".$journeyId."/stats");
     }
 }

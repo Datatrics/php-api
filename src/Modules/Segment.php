@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Segment extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/segment");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/segment");
     }
 
     /**
@@ -21,7 +23,10 @@ class Segment extends Base
      */
     public function Get($segmentId = null, $args = array("limit" => 50))
     {
-        return $segmentId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$segmentId."?".http_build_query($args));
+        if (is_null($segmentId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$segmentId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Segment extends Base
      */
     public function Create($segment)
     {
-        return $this->request(self::HTTP_POST, "", $segment);
+        return $this->GetClient()->Post($this->GetUrl(), $segment);
     }
 
     /**
@@ -45,6 +50,6 @@ class Segment extends Base
         if (!isset($segment['segmentid'])) {
             throw new \Exception('segment must contain segmentid');
         }
-        return $this->request(self::HTTP_PUT, "/".$segment['segmentid'], $segment);
+        return $this->GetClient()->Put($this->GetUrl()."/".$segment['segmentid'], $segment);
     }
 }

@@ -1,17 +1,21 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Box extends Base
 {
+
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/box");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/box");
     }
+
 
     /**
      * Get one or multiple boxes
@@ -21,7 +25,10 @@ class Box extends Base
      */
     public function Get($boxId = null, $args = array("limit" => 50))
     {
-        return $boxId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$boxId."?".http_build_query($args));
+        if (is_null($boxId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$boxId, $args);
     }
 
     /**
@@ -32,7 +39,7 @@ class Box extends Base
      */
     public function GetCode($boxId, $args = array("limit" => 50))
     {
-        return $this->request(self::HTTP_GET, "/".$boxId."/code?".http_build_query($args));
+        return $this->GetClient()->Get($this->GetUrl()."/".$boxId."/code", $args);
     }
 
     /**
@@ -44,7 +51,10 @@ class Box extends Base
      */
     public function GetVersion($boxId, $versionId = null, $args = array("limit" => 50))
     {
-        return $versionId == null ? $this->request(self::HTTP_GET, "/".$boxId."/version?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$boxId."/version/".$versionId."?".http_build_query($args));
+        if (is_null($versionId)) {
+            return $this->GetClient()->Get($this->GetUrl()."/".$boxId."/version/", $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$boxId."/version/".$versionId, $args);
     }
 
     /**
@@ -54,7 +64,7 @@ class Box extends Base
      */
     public function Create($box)
     {
-        return $this->request(self::HTTP_POST, "", $box);
+        return $this->GetClient()->Post($this->GetUrl(), $box);
     }
 
     /**
@@ -64,7 +74,7 @@ class Box extends Base
      */
     public function CreateVersion($boxId, $version)
     {
-        return $this->request(self::HTTP_POST, "/".$boxId."/version", $version);
+        return $this->GetClient()->Post($this->GetUrl()."/".$boxId."/version", $version);
     }
 
     /**
@@ -75,7 +85,7 @@ class Box extends Base
      */
     public function Delete($boxId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$boxId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$boxId);
     }
 
     /**
@@ -86,7 +96,7 @@ class Box extends Base
      */
     public function DeleteVersion($boxId, $versionId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$boxId."/version/".$versionId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$boxId."/version/".$versionId);
     }
 
     /**
@@ -101,7 +111,7 @@ class Box extends Base
             throw new \Exception("box must contain a boxid");
         }
 
-        return $this->request(self::HTTP_PUT, "/".$box['boxid'], $box);
+        return $this->GetClient()->Put($this->GetUrl()."/".$box['boxid'], $box);
     }
 
     /**
@@ -117,6 +127,6 @@ class Box extends Base
             throw new \Exception("version must contain a versionid");
         }
 
-        return $this->request(self::HTTP_PUT, "/".$boxid."/version/".$version['versionid'], $version);
+        return $this->GetClient()->Put($this->GetUrl()."/".$boxid."/version/".$version['versionid'], $version);
     }
 }

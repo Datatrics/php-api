@@ -1,18 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
-use Datatrics\Bundle\ProfileBundle\Controller\ProfileController;
+use Datatrics\API\Client;
 
 class User extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/user");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/user");
     }
 
     /**
@@ -23,7 +23,10 @@ class User extends Base
      */
     public function Get($userId = null, $args = array("limit" => 50))
     {
-        return $userId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$userId."?".http_build_query($args));
+        if (is_null($userId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$userId, $args);
     }
 
     /**
@@ -33,7 +36,7 @@ class User extends Base
      */
     public function Create($user)
     {
-        return $this->request(self::HTTP_POST, "", $user);
+        return $this->GetClient()->Post($this->GetUrl(), $user);
     }
 
     /**
@@ -47,7 +50,7 @@ class User extends Base
         if (!isset($user['userid'])) {
             throw new \Exception('user must contain userid');
         }
-        return $this->request(self::HTTP_PUT, "/".$user['userid'], $user);
+        return $this->GetClient()->Put($this->GetUrl()."/".$user['userid'], $user);
     }
 
     /**
@@ -57,7 +60,7 @@ class User extends Base
      */
     public function Delete($userId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$userId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$userId);
     }
 
     /**
@@ -71,7 +74,7 @@ class User extends Base
             'username' => $username,
             'password' => $password
         ];
-        return $this->request(self::HTTP_POST, "/getToken", $args);
+        return $this->GetClient()->Post($this->GetUrl()."/getToken", $args);
     }
 
     /**
@@ -85,6 +88,6 @@ class User extends Base
             'username' => $username,
             'password' => $password
         ];
-        return $this->request(self::HTTP_POST, "/getApiKey", $args);
+        return $this->GetClient()->Post($this->GetUrl()."/getApiKey", $args);
     }
 }

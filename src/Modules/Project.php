@@ -1,15 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Project extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
+     * @param Client $client
      */
-    public function __construct($apikey)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project");
+        parent::__construct($client);
+        $this->SetUrl("/project");
     }
 
     /**
@@ -20,7 +23,10 @@ class Project extends Base
      */
     public function Get($projectId = null, $args = array("limit" => 50))
     {
-        return $projectId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$projectId."?".http_build_query($args));
+        if (is_null($projectId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$projectId, $args);
     }
 
     /**
@@ -30,7 +36,7 @@ class Project extends Base
      */
     public function Create($project)
     {
-        return $this->request(self::HTTP_POST, "", $project);
+        return $this->GetClient()->Post($this->GetUrl(), $project);
     }
 
     /**
@@ -45,7 +51,7 @@ class Project extends Base
         if (!isset($project['projectid'])) {
             throw new \Exception("project must contain a projectid");
         }
-        return $this->request(self::HTTP_PUT, "/".$project['projectid'], $project);
+        return $this->GetClient()->Post($this->GetUrl()."/".$project['projectid'], $project);
     }
 
     /**
@@ -55,7 +61,7 @@ class Project extends Base
      */
     public function Delete($projectId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$projectId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$projectId);
     }
 
     /**
@@ -65,7 +71,7 @@ class Project extends Base
      */
     public function Fields($projectId)
     {
-        return $this->request(self::HTTP_GET, "/".$projectId."/fields");
+        return $this->GetClient()->Get($this->GetUrl()."/".$projectId."/fields");
     }
 
     /**
@@ -75,6 +81,6 @@ class Project extends Base
      */
     public function Logs($projectId)
     {
-        return $this->request(self::HTTP_GET, "/".$projectId."/logs");
+        return $this->GetClient()->Get($this->GetUrl()."/".$projectId."/logs");
     }
 }

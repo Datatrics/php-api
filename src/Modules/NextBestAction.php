@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class NextBestAction extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/nextbestaction");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/nextbestaction");
     }
 
     /**
@@ -21,7 +23,10 @@ class NextBestAction extends Base
      */
     public function Get($nextbestactionId = null, $args = array("limit" => 50))
     {
-        return $nextbestactionId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$nextbestactionId."?".http_build_query($args));
+        if (is_null($nextbestactionId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$nextbestactionId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class NextBestAction extends Base
      */
     public function Create($nextbestaction)
     {
-        return $this->request(self::HTTP_POST, "", $nextbestaction);
+        return $this->GetClient()->Post($this->GetUrl(), $nextbestaction);
     }
 
     /**
@@ -44,7 +49,7 @@ class NextBestAction extends Base
         if (!isset($nextbestaction['nextbestactionid'])) {
             throw new \Exception('nextbestaction must contain nextbestactionid');
         }
-        return $this->request(self::HTTP_PUT, "/".$nextbestaction['nextbestactionid'], $nextbestaction);
+        return $this->GetClient()->Put($this->GetUrl()."/".$nextbestaction['nextbestactionid'], $nextbestaction);
     }
 
     /**
@@ -54,7 +59,7 @@ class NextBestAction extends Base
      */
     public function Delete($nextbestactionId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$nextbestactionId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$nextbestactionId);
     }
 
     /**
@@ -64,7 +69,7 @@ class NextBestAction extends Base
      */
     public function Schedule($nextbestactionId)
     {
-        return $this->request(self::HTTP_PUT, "/".$nextbestactionId."/schedule");
+        return $this->GetClient()->Put($this->GetUrl()."/".$nextbestactionId."/schedule");
     }
 
     /**
@@ -74,6 +79,6 @@ class NextBestAction extends Base
      */
     public function Assign($nextbestactionId)
     {
-        return $this->request(self::HTTP_PUT, "/".$nextbestactionId."/assign");
+        return $this->GetClient()->Put($this->GetUrl()."/".$nextbestactionId."/v");
     }
 }

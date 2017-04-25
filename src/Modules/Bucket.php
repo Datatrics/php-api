@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Bucket extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/bucket");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/bucket");
     }
 
     /**
@@ -21,7 +23,10 @@ class Bucket extends Base
      */
     public function Get($bucketId = null, $args = array("limit" => 50))
     {
-        return $bucketId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$bucketId."?".http_build_query($args));
+        if (is_null($bucketId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$bucketId, $args);
     }
 
     /**
@@ -33,7 +38,10 @@ class Bucket extends Base
      */
     public function GetObject($bucketId, $objectId, $args = array("limit" => 50))
     {
-        return $objectId == null ? $this->request(self::HTTP_GET, "/".$bucketId."/object?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$bucketId."/object/".$objectId."?".http_build_query($args));
+        if (is_null($objectId)) {
+            return $this->GetClient()->Get($this->GetUrl()."/".$bucketId."/object", $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$bucketId."/object/".$objectId, $args);
     }
 
     /**
@@ -54,7 +62,7 @@ class Bucket extends Base
      */
     public function CreateObject($bucketId, $object)
     {
-        return $this->request(self::HTTP_POST, "/".$bucketId."/object", $object);
+        return $this->GetClient()->Post($this->GetUrl()."/".$bucketId."/object", $object);
     }
 
     /**
@@ -64,7 +72,7 @@ class Bucket extends Base
      */
     public function Delete($bucketId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$bucketId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$bucketId);
     }
 
     /**
@@ -74,7 +82,7 @@ class Bucket extends Base
      */
     public function Fields($bucketId)
     {
-        return $this->request(self::HTTP_GET, "/".$bucketId."/fields");
+        return $this->GetClient()->Get($this->GetUrl()."/".$bucketId."/fields");
     }
 
     /**
@@ -83,12 +91,11 @@ class Bucket extends Base
      * @throws \Exception When more that 50 objects are provided
      * @return object Result of the request
      */
-    public function UpdateBulk($bucketId, $items)
+    public function Bulk($bucketId, $items)
     {
         if (count($items) > 50) {
             throw new \Exception("Maximum of 50 content items allowed at a time");
         }
-
-        return $this->request(self::HTTP_POST, "/".$bucketId."/object/bulk", ['items' => $items]);
+        return $this->GetClient()->Post($this->GetUrl()."/".$bucketId."/object/bulk", ['items' => $items]);
     }
 }

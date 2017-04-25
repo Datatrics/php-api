@@ -70,4 +70,13 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             $client->GetProjectId()
         );
     }
+
+    public function testGetApiVersion()
+    {
+        $client = new Client(1, 2);
+        $this->assertEquals(
+            '2.0',
+            $client->GetApiVersion()
+        );
+    }
 }

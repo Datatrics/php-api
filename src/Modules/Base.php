@@ -1,223 +1,70 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Base
 {
     /**
-     * @const Client version
-     */
-    const CLIENT_VERSION = '2.0';
-
-    /**
-     * @const HTTP Method GET
-     */
-    const HTTP_GET = 'GET';
-
-    /**
-     * @const HTTP Method POST
-     */
-    const HTTP_POST = 'POST';
-
-    /**
-     * @const HTTP Method PUT
-     */
-    const HTTP_PUT = 'PUT';
-
-    /**
-     * @const HTTP Method DELETE
-     */
-    const HTTP_DELETE = 'DELETE';
-
-    /**
      * @var string
      */
-    protected $api_endpoint = 'https://api.datatrics.com/2.0';
+    public $url;
 
     /**
-     * @var string
+     * @var Client
      */
-    protected $api_key;
+    public $client;
 
     /**
      * Base constructor.
-     * @param $apikey
-     * @param $endpoint
+     * @param Client $client
      */
-    public function __construct($apikey, $endpoint)
+    public function __construct($client)
     {
-        $this->api_key = $apikey;
-        $this->api_endpoint .= $endpoint;
+        $this->SetClient($client);
     }
 
     /**
      * @return string
      */
-    protected function getApiEndpoint()
+    public function GetUrl()
     {
-        return $this->api_endpoint;
+        return $this->url;
     }
 
     /**
-     * @param string $api_endpoint
+     * @param string $url
      * @return Base
      */
-    protected function setApiEndpoint($api_endpoint)
+    public function SetUrl($url)
     {
-        $this->api_endpoint = $api_endpoint;
+        $this->url = $url;
         return $this;
     }
 
     /**
-     * @return string
+     * @return Client
      */
-    protected function getApiKey()
+    public function GetClient()
     {
-        return $this->api_key;
+        return $this->client;
     }
 
     /**
-     * @param string $api_key
+     * @param Client $client
      * @return Base
      */
-    protected function setApiKey($api_key)
+    public function SetClient($client)
     {
-        $this->api_key = $api_key;
+        $this->client = $client;
         return $this;
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function checkApiKey()
+    public function request($method, $url = "", $payload = [])
     {
-        if (empty($this->api_key)) {
-            throw new \Exception('You have not set an api key. Please use setApiKey() to set the API key.');
+        if (empty($url)) {
+            $url = $this->GetUrl();
         }
-    }
-
-    /**
-     * @param $url
-     * @param null|array $payload
-     * @return string
-     */
-    public function getUrl($url, $payload = null)
-    {
-        $url = $this->api_endpoint.$url;
-        if ($payload) {
-            $url .= "?".http_build_query($payload);
-        }
-        return $url;
-    }
-
-    /**
-     * @param int   $responseCode
-     * @param array $responseBody
-     *
-     * @throws \Exception
-     */
-    private function handleResponseError($responseCode, $responseBody)
-    {
-        $errorMessage = 'Unknown error: ' . $responseCode;
-
-        if (!empty($responseBody) && array_key_exists('error', $responseBody)) {
-            $errorMessage = $responseBody['error']['message'];
-        }
-        if (!empty($responseBody) && array_key_exists('message', $responseBody)) {
-            $errorMessage = $responseBody['message'];
-        }
-
-
-        throw new \Exception($errorMessage, $responseCode);
-    }
-
-    /**
-     * @param resource $curlHandle
-     *
-     * @throws \Exception
-     */
-    private function handleCurlError($curlHandle)
-    {
-        $errorMessage = 'Curl error: ' . curl_error($curlHandle);
-
-        throw new \Exception($errorMessage, curl_errno($curlHandle));
-    }
-
-    /**
-     * Perform an http call. This method is used by the resource specific classes.
-     *
-     * @param $method
-     * @param $url
-     * @param $payload
-     *
-     * @return string|object
-     *
-     * @throws \Exception
-     */
-    public function request($method, $url, $payload = null)
-    {
-        $this->checkApiKey();
-
-        $user_agent = 'Datatrics/API '.self::CLIENT_VERSION;
-        $request_headers = array(
-            'Accept: application/json',
-            'X-apikey: '.$this->api_key,
-            'X-client-name: '.$user_agent,
-            'X-datatrics-client-info: '.php_uname(),
-        );
-
-        if ($method == 'post' || $method == 'put') {
-            if (!$payload || !is_array($payload)) {
-                throw new \Exception('Invalid payload', 100);
-            }
-            $request_headers['Content-Type'] = 'application/json';
-            $curlOptions = array(
-                CURLOPT_URL           => $this->getUrl($url),
-                CURLOPT_CUSTOMREQUEST => strtoupper($method),
-                CURLOPT_POSTFIELDS    => json_encode($payload),
-            );
-        } elseif ($method == 'delete') {
-            $curlOptions = array(
-                CURLOPT_URL           => $this->getUrl($url),
-                CURLOPT_CUSTOMREQUEST => 'DELETE',
-            );
-        } else {
-            $curlOptions = array(
-                CURLOPT_URL => $this->getUrl($url, $payload),
-            );
-        }
-
-        $curlOptions += array(
-            CURLOPT_HEADER         => false,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_USERAGENT      => $user_agent,
-            CURLOPT_SSLVERSION     => 6,
-            CURLOPT_HTTPHEADER     => $request_headers
-        );
-
-        $curlHandle = curl_init();
-
-        curl_setopt_array($curlHandle, $curlOptions);
-
-        $responseBody = curl_exec($curlHandle);
-
-        if (curl_errno($curlHandle)) {
-            $this->handleCurlError($curlHandle);
-        }
-
-        $responseBody = json_decode($responseBody, true);
-        $responseCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-
-        curl_close($curlHandle);
-
-
-        if ($responseCode < 200 || $responseCode > 299 || (!empty($responseBody) && array_key_exists('error', $responseBody))) {
-            $this->handleResponseError($responseCode, $responseBody);
-        }
-        if ($responseCode < 200 || $responseCode > 299 || (!empty($responseBody) && array_key_exists('message', $responseBody))) {
-            $this->handleResponseError($responseCode, $responseBody);
-        }
-
-        return $responseBody;
+        return $this->GetClient()->SendRequest($method, $url, $payload);
     }
 }

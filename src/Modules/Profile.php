@@ -1,6 +1,8 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Profile extends Base
 {
     /**
@@ -8,9 +10,10 @@ class Profile extends Base
      * @param string $apikey
      * @param string $projectid
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/profile");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/profile");
     }
 
     /**
@@ -21,7 +24,10 @@ class Profile extends Base
      */
     public function Get($profileId = null, $args = array("limit" => 50))
     {
-        return $profileId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$profileId."?".http_build_query($args));
+        if (is_null($profileId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$profileId, $args);
     }
 
     /**
@@ -31,7 +37,7 @@ class Profile extends Base
      */
     public function Create($profile)
     {
-        return $this->request(self::HTTP_POST, "", $profile);
+        return $this->GetClient()->Post($this->GetUrl(), $profile);
     }
 
     /**
@@ -41,7 +47,7 @@ class Profile extends Base
      */
     public function Delete($profileid)
     {
-        return $this->request(self::HTTP_DELETE, "/".$profileid);
+        return $this->GetClient()->Delete($this->GetUrl()."/".profileid);
     }
 
     /**
@@ -55,8 +61,7 @@ class Profile extends Base
         if (!isset($profile['profileid'])) {
             throw new \Exception("profile must contain a profileid");
         }
-
-        return $this->request(self::HTTP_PUT, "/".$profile['profileid'], $profile);
+        return $this->GetClient()->Post($this->GetUrl()."/".$profile['profileid'], $profile);
     }
 
     /**
@@ -65,12 +70,12 @@ class Profile extends Base
      * @throws \Exception When more that 50 profiles are provided
      * @return object Result of the request
      */
-    public function UpdateBulk($profiles)
+    public function Bulk($profiles)
     {
         if (count($profiles) > 50) {
             throw new \Exception("Maximum of 50 profiles allowed at a time");
         }
 
-        return $this->request(self::HTTP_POST, "/bulk", ['items' => $profiles]);
+        return $this->GetClient()->Post($this->GetUrl()."/bulk", ['items' => $profiles]);
     }
 }

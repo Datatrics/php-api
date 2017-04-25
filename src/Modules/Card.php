@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Card extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/card");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/card");
     }
 
     /**
@@ -21,7 +23,10 @@ class Card extends Base
      */
     public function Get($cardId = null, $args = array("limit" => 50))
     {
-        return $cardId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$cardId."?".http_build_query($args));
+        if (is_null($cardId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$cardId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Card extends Base
      */
     public function Create($card)
     {
-        return $this->request(self::HTTP_POST, "", $card);
+        return $this->GetClient()->Post($this->GetUrl(), $card);
     }
 
     /**
@@ -44,6 +49,6 @@ class Card extends Base
         if (!isset($card['cardid'])) {
             throw new \Exception("card must contain a cardid");
         }
-        return $this->request(self::HTTP_PUT, "/".$card['cardid'], $card);
+        return $this->GetClient()->Put($this->GetUrl()."/".$card['cardid'], $card);
     }
 }

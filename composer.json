@@ -1,8 +1,8 @@
 {
 	"name": "datatrics/php-api",
 	"description": "Datattrics API client",
-	"keywords": ["datatrics", "datatrics.com", "api"],
-	"license": "Apache Version 2",
+	"keywords": ["datatrics", "datatrics.com", "api", "php-api", "php-sdk"],
+	"license": "MIT",
 	"authors": [{
 		"name": "Nico Borghuis",
 		"email": "nico@datatrics.com"
@@ -15,13 +15,13 @@
 	}],
 	"autoload": {
 		"psr-4": {
-			"Datatrics\\API\\": ["src","test/"]
+			"Datatrics\\API\\": ["src/","test/"]
 		}
 	},
 	"require": {
-		"php": ">=5.4",
-		"ext-curl": "*",
-		"ext-json": "*"
+		"php": ">=7.0",
+		"ext-json": "*",
+		"guzzlehttp/guzzle": "~6.2"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "6.0.*",

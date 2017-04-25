@@ -1,6 +1,8 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Campaign extends Base
 {
     /**
@@ -8,9 +10,10 @@ class Campaign extends Base
      * @param string $apikey
      * @param string $projectid
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/campaign");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/campaign");
     }
 
     /**
@@ -21,7 +24,10 @@ class Campaign extends Base
      */
     public function Get($campaignId = null, $args = array("limit" => 50))
     {
-        return $campaignId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$campaignId."?".http_build_query($args));
+        if (is_null($campaignId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$campaignId, $args);
     }
 
     /**
@@ -33,7 +39,10 @@ class Campaign extends Base
      */
     public function GetLane($campaignId, $laneId = null, $args = array("limit" => 50))
     {
-        return $laneId == null ? $this->request(self::HTTP_GET, "/".$campaignId."/lane/?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$campaignId."/lane/".$laneId."?".http_build_query($args));
+        if (is_null($laneId)) {
+            return $this->GetClient()->Get($this->GetUrl()."/".$campaignId."/lane", $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$campaignId."/lane/".$laneId, $args);
     }
 
     /**
@@ -43,7 +52,7 @@ class Campaign extends Base
      */
     public function Create($campaign)
     {
-        return $this->request(self::HTTP_POST, "", $campaign);
+        return $this->GetClient()->Post($this->GetUrl(), $campaign);
     }
 
     /**
@@ -54,7 +63,7 @@ class Campaign extends Base
      */
     public function CreateLane($campaignId, $lane)
     {
-        return $this->request(self::HTTP_POST, "/".$campaignId."/lane", $lane);
+        return $this->GetClient()->Post($this->GetUrl()."/".$campaignId."/lane", $lane);
     }
 
     /**
@@ -68,8 +77,7 @@ class Campaign extends Base
         if (!isset($campaign['campaignid'])) {
             throw new \Exception("campaign must contain a campaignid");
         }
-
-        return $this->request(self::HTTP_PUT, "/".$campaign['campaignid'], $campaign);
+        return $this->GetClient()->Put($this->GetUrl()."/".$campaign['campaignid'], $campaign);
     }
 
     /**
@@ -84,8 +92,7 @@ class Campaign extends Base
         if (!isset($lane['laneid'])) {
             throw new \Exception("lane must contain a laneid");
         }
-
-        return $this->request(self::HTTP_PUT, "/".$campaignId."/lane/".$lane['laneid'], $lane);
+        return $this->GetClient()->Put($this->GetUrl()."/".$campaignId."/lane/".$lane['laneid'], $lane);
     }
 
     /**
@@ -95,7 +102,17 @@ class Campaign extends Base
      */
     public function Delete($campaignId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$campaignId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$campaignId);
+    }
+
+    /**
+     * Delete a campaign object by campaign id
+     * @param string Id of the campaign
+     * @return object Result of the request
+     */
+    public function DeleteLane($campaignId, $laneId)
+    {
+        return $this->GetClient()->Delete($this->GetUrl()."/".$campaignId."/lane/".$laneId);
     }
 
     /**
@@ -105,7 +122,7 @@ class Campaign extends Base
      */
     public function Stats($campaignId)
     {
-        return $this->request(self::HTTP_GET, "/".$campaignId."/stats");
+        return $this->GetClient()->Get($this->GetUrl()."/".$campaignId."/stats");
     }
 
     /**
@@ -116,6 +133,6 @@ class Campaign extends Base
      */
     public function StatsLane($campaignId, $laneId)
     {
-        return $this->request(self::HTTP_GET, "/".$campaignId."/lane/".$laneId."/stats");
+        return $this->GetClient()->Get($this->GetUrl()."/".$campaignId."/lane/".$laneId."/stats");
     }
 }

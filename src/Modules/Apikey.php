@@ -1,15 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Apikey extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
+     * @param Client $client
      */
-    public function __construct($apikey)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/apikey");
+        parent::__construct($client);
+        $this->SetUrl("/apikey");
     }
 
     /**
@@ -19,7 +22,7 @@ class Apikey extends Base
      */
     public function Get($args = array("limit" => 50))
     {
-        return$this->request(self::HTTP_GET, "?".http_build_query($args));
+        return $this->request(Client::HTTP_GET, $this->GetUrl(), $args);
     }
 
     /**
@@ -29,6 +32,6 @@ class Apikey extends Base
      */
     public function Create($apikey)
     {
-        return $this->request(self::HTTP_POST, "", $apikey);
+        return $this->request(Client::HTTP_POST, $this->GetUrl(), $apikey);
     }
 }

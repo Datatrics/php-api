@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Sale extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/sale");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/sale");
     }
 
     /**
@@ -21,7 +23,10 @@ class Sale extends Base
      */
     public function Get($saleId = null, $args = array("limit" => 50))
     {
-        return $saleId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$saleId."?".http_build_query($args));
+        if (is_null($saleId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$saleId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Sale extends Base
      */
     public function Create($sale)
     {
-        return $this->request(self::HTTP_POST, "", $sale);
+        return $this->GetClient()->Post($this->GetUrl(), $sale);
     }
 
     /**
@@ -41,7 +46,7 @@ class Sale extends Base
      */
     public function Delete($saleId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$saleId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$saleId);
     }
 
     /**
@@ -50,12 +55,12 @@ class Sale extends Base
      * @throws \Exception When more that 50 content items are provided
      * @return object Result of the request
      */
-    public function UpdateBulk($items)
+    public function Bulk($items)
     {
         if (count($items) > 50) {
             throw new \Exception("Maximum of 50 sale items allowed at a time");
         }
 
-        return $this->request(self::HTTP_POST, "/bulk", ['items' => $items]);
+        return $this->GetClient()->Post($this->GetUrl()."/bulk", ['items' => $items]);
     }
 }

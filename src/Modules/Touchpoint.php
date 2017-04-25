@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Touchpoint extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/touchpoint");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/touchpoint");
     }
 
     /**
@@ -21,7 +23,10 @@ class Touchpoint extends Base
      */
     public function Get($touchpointId = null, $args = array("limit" => 50))
     {
-        return $touchpointId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$touchpointId."?".http_build_query($args));
+        if (is_null($touchpointId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$touchpointId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Touchpoint extends Base
      */
     public function Create($touchpoint)
     {
-        return $this->request(self::HTTP_POST, "", $touchpoint);
+        return $this->GetClient()->Post($this->GetUrl(), $touchpoint);
     }
 
     /**
@@ -45,7 +50,7 @@ class Touchpoint extends Base
         if (!isset($touchpoint['touchpointid'])) {
             throw new \Exception('touchpoint must contain touchpointid');
         }
-        return $this->request(self::HTTP_PUT, "/".$touchpoint['touchpointid'], $touchpoint);
+        return $this->GetClient()->Put($this->GetUrl()."/".$touchpoint['touchpointid'], $touchpoint);
     }
 
     /**
@@ -55,7 +60,7 @@ class Touchpoint extends Base
      */
     public function Delete($touchpointId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$touchpointId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$touchpointId);
     }
 
     /**
@@ -63,12 +68,8 @@ class Touchpoint extends Base
      * @param string Id of the touchpoint
      * @return object Result of the request
      */
-    public function Stats($touchpointId, $args)
+    public function Stats($touchpointId, $args = [])
     {
-        if (count($args)) {
-            return $this->request(self::HTTP_GET, "/".$touchpointId."/stats?".http_build_query($args));
-        } else {
-            return $this->request(self::HTTP_GET, "/".$touchpointId."/stats");
-        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$touchpointId."/stats", $args);
     }
 }

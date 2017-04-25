@@ -1,6 +1,8 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Link extends Base
 {
     /**
@@ -8,9 +10,10 @@ class Link extends Base
      * @param string $apikey
      * @param string $projectid
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/link");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/link");
     }
 
     /**
@@ -20,7 +23,7 @@ class Link extends Base
      */
     public function Get($linkId)
     {
-        return $this->request(self::HTTP_GET, "/".$linkId);
+        return $this->GetClient()->Get($this->GetUrl()."/".$linkId);
     }
 
 
@@ -31,6 +34,6 @@ class Link extends Base
      */
     public function Create($link)
     {
-        return $this->request(self::HTTP_POST, "", $link);
+        return $this->GetClient()->Post($this->GetUrl(), $link);
     }
 }

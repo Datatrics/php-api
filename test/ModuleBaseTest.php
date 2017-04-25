@@ -34,37 +34,18 @@ use Datatrics\API\Modules\Webhook;
 
 class ModuleBaseTest extends \PHPUnit\Framework\TestCase
 {
-    public function testRequestExceptionCode()
+    public function testGetUrl()
     {
-        $Base = new Base(1, "/base");
-        $this->expectExceptionCode(404);
-        $Base->request("GET", "/get", []);
+        $Client = new Client(1, 2);
+        $Base = new Base($Client);
+        $this->assertNull($Base->GetUrl());
     }
 
-    public function testRequestExceptionMessage()
+    public function testSetUrl()
     {
-        $Base = new Base(1, "/base");
-        $this->expectExceptionMessage('Not Found');
-        $Base->request("GET", "/get", []);
-    }
-
-    public function testRequestEmptyApiKey()
-    {
-        $Base = new Base("", "/base");
-        $this->expectExceptionMessage('You have not set an api key. Please use setApiKey() to set the API key.');
-        $Base->request("GET", "/get", []);
-    }
-
-    public function testCheckApiKeyEmpty()
-    {
-        $Base = new Base("", "/base");
-        $this->expectExceptionMessage('You have not set an api key. Please use setApiKey() to set the API key.');
-        $Base->checkApiKey();
-    }
-
-    public function testCheckApiKeyNotEmpty()
-    {
-        $Base = new Base("1", "/base");
-        $this->assertNull($Base->checkApiKey());
+        $Client = new Client(1, 2);
+        $Base = new Base($Client);
+        $Base->SetUrl('/base');
+        $this->assertEquals('/base', $Base->GetUrl());
     }
 }

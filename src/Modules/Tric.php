@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Tric extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/tric");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/tric");
     }
 
     /**
@@ -21,7 +23,10 @@ class Tric extends Base
      */
     public function Get($tricId = null, $args = array("limit" => 50))
     {
-        return $tricId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$tricId."?".http_build_query($args));
+        if (is_null($tricId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$tricId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Tric extends Base
      */
     public function Create($tric)
     {
-        return $this->request(self::HTTP_POST, "", $tric);
+        return $this->GetClient()->Post($this->GetUrl(), $tric);
     }
 
     /**
@@ -45,7 +50,7 @@ class Tric extends Base
         if (!isset($tric['tricid'])) {
             throw new \Exception('tric must contain tricid');
         }
-        return $this->request(self::HTTP_PUT, "/".$tric['tricid'], $tric);
+        return $this->GetClient()->Put($this->GetUrl()."/".$tric['tricid'], $tric);
     }
 
     /**
@@ -55,7 +60,7 @@ class Tric extends Base
      */
     public function Delete($tricId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$tricId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$tricId);
     }
 
     /**
@@ -65,6 +70,6 @@ class Tric extends Base
      */
     public function Run($tricId)
     {
-        return $this->request(self::HTTP_GET, "/".$tricId);
+        return $this->GetClient()->Get($this->GetUrl()."/".$tricId."/do");
     }
 }

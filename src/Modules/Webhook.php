@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Webhook extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct($client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/webhook");
+        parent::__construct($client);
+        $this->setUrl("/project/" . $client->GetProjectId() . "/webhook");
     }
 
     /**
@@ -22,6 +24,6 @@ class Webhook extends Base
      */
     public function Send($channel, $type, $webhook)
     {
-        return $this->request(self::HTTP_POST, "/".$channel."/$type", $webhook);
+        return $this->GetClient()->Post($this->getUrl()."/".$channel."/$type", $webhook);
     }
 }

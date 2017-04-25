@@ -2,26 +2,23 @@
 
 require_once(__DIR__."/../vendor/autoload.php");
 
-$apiKey = '';
-$projectId = '';
+$apiKey = 'cda6147aecdd40a7ba413db94fbf2742';
+$projectId = '255418';
 
 $api = new Datatrics\API\Client($apiKey, $projectId);
-$projects = $api->Project->Get();
-foreach ($projects as $project) {
+$project = $api->Project->Get('255418');
+#foreach($projects['items'] as $project) {
     echo "<pre>";
     print_r($project);
     echo "</pre>";
-    $api->SetProjectId($project->projectid);
-    $channels = $api->Channel->Get();
-    foreach ($channels as $channel) {
-        echo "<pre>";
-        print_r($channel);
-        echo "</pre>";
+    if ($project['projectid']) {
+        #$api->SetProjectId($project['projectid']);
+        $items = $api->Content->Get();
+        foreach ($items['items'] as $item) {
+            echo "<pre>";
+            print_r($item);
+            echo "</pre>";
+        }
     }
-    $trics = $api->Tric->Get();
-    foreach ($trics as $tric) {
-        echo "<pre>";
-        print_r($tric);
-        echo "</pre>";
-    }
-}
+    exit;
+#}

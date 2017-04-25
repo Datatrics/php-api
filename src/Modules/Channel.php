@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Channel extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/channel");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/channel");
     }
 
     /**
@@ -21,7 +23,10 @@ class Channel extends Base
      */
     public function Get($channelId = null, $args = array("limit" => 50))
     {
-        return $channelId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$channelId."?".http_build_query($args));
+        if (is_null($channelId)) {
+            return $this->GetClient()->Get($this->getUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->getUrl()."/".$channelId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Channel extends Base
      */
     public function Create($channel)
     {
-        return $this->request(self::HTTP_POST, "", $channel);
+        return $this->GetClient()->Post($this->getUrl(), $channel);
     }
 
     /**
@@ -45,7 +50,7 @@ class Channel extends Base
         if (!isset($channel['channelid'])) {
             throw new \Exception("channel must contain a channelid");
         }
-        return $this->request(self::HTTP_PUT, "/".$channel['channelid'], $channel);
+        return $this->GetClient()->Put($this->getUrl()."/".$channel['channelid'], $channel);
     }
 
     /**
@@ -55,6 +60,6 @@ class Channel extends Base
      */
     public function Delete($channelId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$channelId);
+        return $this->GetClient()->Delete($this->getUrl()."/".$channelId);
     }
 }

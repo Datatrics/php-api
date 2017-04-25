@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Goal extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/goal");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/goal");
     }
 
     /**
@@ -21,7 +23,10 @@ class Goal extends Base
      */
     public function Get($goalId = null, $args = array("limit" => 50))
     {
-        return $goalId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$goalId."?".http_build_query($args));
+        if (is_null($goalId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$goalId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Goal extends Base
      */
     public function Create($goal)
     {
-        return $this->request(self::HTTP_POST, "", $goal);
+        return $this->GetClient()->Post($this->GetUrl(), $goal);
     }
 
     /**
@@ -45,7 +50,7 @@ class Goal extends Base
         if (!isset($goal['goalid'])) {
             throw new \Exception('goal must contain goalid');
         }
-        return $this->request(self::HTTP_PUT, "/".$goal['goalid'], $goal);
+        return $this->GetClient()->Put($this->GetUrl()."/".$goal['goalid'], $goal);
     }
 
     /**
@@ -55,6 +60,6 @@ class Goal extends Base
      */
     public function Delete($goalId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$goalId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$goalId);
     }
 }

@@ -41,7 +41,7 @@ class ModuleApikeyTest extends \PHPUnit\Framework\TestCase
         var_dump($Client->Apikey->Get());
     }
 
-    public function testGetExceptioncode()
+    public function testGetExceptionCode()
     {
         $Client = new Client(1, 2);
         $this->expectExceptionCode(403);

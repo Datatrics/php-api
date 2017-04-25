@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Theme extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/theme");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/theme");
     }
 
     /**
@@ -21,7 +23,7 @@ class Theme extends Base
      */
     public function Get()
     {
-        $this->request(self::HTTP_GET, "");
+        return $this->GetClient()->Get($this->GetUrl());
     }
 
     /**
@@ -31,6 +33,6 @@ class Theme extends Base
      */
     public function Update($template)
     {
-        return $this->request(self::HTTP_PUT, "", $template);
+        return $this->GetClient()->Put($this->GetUrl(), $template);
     }
 }

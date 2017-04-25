@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Content extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/content");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/content");
     }
 
     /**
@@ -19,14 +21,12 @@ class Content extends Base
      * @param object Containing query arguments
      * @return object Result of the request
      */
-    public function Get($contentId = null, $args = array("limit" => 50, 'type' => 'item', 'itemtype' => 'product'))
+    public function Get($contentId = null, $args = array("limit" => 50, 'type' => 'item'))
     {
-        if ($contentId) {
-            if (!isset($args['source'])) {
-                throw new \Exception('Source is required');
-            }
+        if (is_null($contentId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
         }
-        return $contentId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$contentId."?".http_build_query($args));
+        return $this->GetClient()->Get($this->GetUrl()."/".$contentId, $args);
     }
 
     /**
@@ -36,7 +36,7 @@ class Content extends Base
      */
     public function Create($content)
     {
-        return $this->request(self::HTTP_POST, "", $content);
+        return $this->GetClient()->Post($this->GetUrl(), $content);
     }
 
     /**
@@ -61,7 +61,7 @@ class Content extends Base
                 throw new \Exception("content must contain a itemtype");
             }
         }
-        return $this->request(self::HTTP_PUT, "/".$content['contentid'], $content);
+        return $this->GetClient()->Put($this->GetUrl()."/".$content['contentid'], $content);
     }
 
     /**
@@ -84,7 +84,7 @@ class Content extends Base
                 }
             }
         }
-        return $this->request(self::HTTP_DELETE, "/".$contentId."?".http_build_query($args));
+        return $this->GetClient()->Delete($this->GetUrl()."/".$contentId, $args);
     }
 
     /**
@@ -93,12 +93,12 @@ class Content extends Base
      * @throws \Exception When more that 50 content items are provided
      * @return object Result of the request
      */
-    public function UpdateBulk($items)
+    public function Bulk($items)
     {
         if (count($items) > 50) {
             throw new \Exception("Maximum of 50 content items allowed at a time");
         }
 
-        return $this->request(self::HTTP_POST, "/bulk", ['items' => $items]);
+        return $this->GetClient()->Post($this->GetUrl()."/bulk", ['items' => $items]);
     }
 }

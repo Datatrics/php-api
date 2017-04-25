@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Interaction extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/interaction");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/interaction");
     }
 
     /**
@@ -21,7 +23,10 @@ class Interaction extends Base
      */
     public function Get($interactionId = null, $args = array("limit" => 50))
     {
-        return $interactionId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$interactionId."?".http_build_query($args));
+        if (is_null($interactionId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$interactionId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Interaction extends Base
      */
     public function Create($interaction)
     {
-        return $this->request(self::HTTP_POST, "", $interaction);
+        return $this->GetClient()->Post($this->GetUrl(), $interaction);
     }
 
     /**
@@ -44,7 +49,7 @@ class Interaction extends Base
         if (!isset($interaction['interactionid'])) {
             throw new \Exception("interaction must contain a interactionid");
         }
-        return $this->request(self::HTTP_PUT, "/".$interaction['interactionid'], $interaction);
+        return $this->GetClient()->Put($this->GetUrl()."/".$interaction['interactionid'], $interaction);
     }
 
     /**
@@ -54,7 +59,7 @@ class Interaction extends Base
      */
     public function Delete($interactionId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$interactionId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$interactionId);
     }
 
     /**
@@ -63,12 +68,12 @@ class Interaction extends Base
      * @throws \Exception When more that 50 interaction items are provided
      * @return object Result of the request
      */
-    public function UpdateBulk($interactions)
+    public function Bulk($interactions)
     {
         if (count($interactions) > 50) {
             throw new \Exception("Maximum of 50 interaction items allowed at a time");
         }
 
-        return $this->request(self::HTTP_POST, "/bulk", ['items' => $interactions]);
+        return $this->GetClient()->Post($this->GetUrl()."/bulk", ['items' => $interactions]);
     }
 }

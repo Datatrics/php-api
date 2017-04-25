@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Scorecard extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/scorecard");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/scorecard");
     }
 
     /**
@@ -21,7 +23,10 @@ class Scorecard extends Base
      */
     public function Get($scorecardId = null, $args = array("limit" => 50))
     {
-        return $scorecardId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$scorecardId."?".http_build_query($args));
+        if (is_null($scorecardId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$scorecardId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Scorecard extends Base
      */
     public function Create($scorecard)
     {
-        return $this->request(self::HTTP_POST, "", $scorecard);
+        return $this->GetClient()->Post($this->GetClient(), $scorecard);
     }
 
     /**
@@ -41,7 +46,7 @@ class Scorecard extends Base
      */
     public function Delete($scorecardId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$scorecardId);
+        return $this->GetClient()->Delete($this->GetClient()."/".$scorecardId);
     }
 
     /**
@@ -50,12 +55,12 @@ class Scorecard extends Base
      * @throws \Exception When more that 50 content items are provided
      * @return object Result of the request
      */
-    public function UpdateBulk($scorecards)
+    public function Bulk($scorecards)
     {
         if (count($scorecards) > 50) {
             throw new \Exception("Maximum of 50 scorecards allowed at a time");
         }
 
-        return $this->request(self::HTTP_POST, "/bulk", ['items' => $scorecards]);
+        return $this->GetClient()->Post($this->GetClient()."/bulk", ['items' => $scorecards]);
     }
 }

@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Trigger extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct(Client $client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/trigger");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/trigger");
     }
 
     /**
@@ -21,7 +23,10 @@ class Trigger extends Base
      */
     public function Get($triggerId = null, $args = array("limit" => 50))
     {
-        return $triggerId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$triggerId."?".http_build_query($args));
+        if (is_null($triggerId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$triggerId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Trigger extends Base
      */
     public function Delete($triggerId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$triggerId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$triggerId);
     }
 
     /**
@@ -41,7 +46,7 @@ class Trigger extends Base
      */
     public function Activate($triggerId)
     {
-        return $this->request(self::HTTP_PUT, "/".$triggerId."/activate");
+        return $this->GetClient()->Put($this->GetUrl()."/".$triggerId."/activate");
     }
 
     /**
@@ -51,6 +56,6 @@ class Trigger extends Base
      */
     public function Deactivate($triggerId)
     {
-        return $this->request(self::HTTP_PUT, "/".$triggerId."/deactivate");
+        return $this->GetClient()->Put($this->GetUrl()."/".$triggerId."/deactivate");
     }
 }

@@ -1,16 +1,18 @@
 <?php
 namespace Datatrics\API\Modules;
 
+use Datatrics\API\Client;
+
 class Template extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
-    public function __construct($apikey, $projectid)
+    public function __construct($client)
     {
-        parent::__construct($apikey, "/project/" . $projectid . "/template");
+        parent::__construct($client);
+        $this->SetUrl("/project/" . $this->GetClient()->GetProjectId() . "/template");
     }
 
     /**
@@ -21,7 +23,10 @@ class Template extends Base
      */
     public function Get($templateId = null, $args = array("limit" => 50))
     {
-        return $templateId == null ? $this->request(self::HTTP_GET, "?".http_build_query($args)) : $this->request(self::HTTP_GET, "/".$templateId."?".http_build_query($args));
+        if (is_null($templateId)) {
+            return $this->GetClient()->Get($this->GetUrl(), $args);
+        }
+        return $this->GetClient()->Get($this->GetUrl()."/".$templateId, $args);
     }
 
     /**
@@ -31,7 +36,7 @@ class Template extends Base
      */
     public function Create($template)
     {
-        return $this->request(self::HTTP_POST, "", $template);
+        return $this->GetClient()->Post($this->GetUrl(), $template);
     }
 
     /**
@@ -45,7 +50,7 @@ class Template extends Base
         if (!isset($template['templateid'])) {
             throw new \Exception('template must contain templateid');
         }
-        return $this->request(self::HTTP_PUT, "/".$template['templateid'], $template);
+        return $this->GetClient()->Put($this->GetUrl()."/".$template['templateid'], $template);
     }
 
     /**
@@ -55,6 +60,6 @@ class Template extends Base
      */
     public function Delete($templateId)
     {
-        return $this->request(self::HTTP_DELETE, "/".$templateId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$templateId);
     }
 }
