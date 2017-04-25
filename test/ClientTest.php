@@ -79,4 +79,23 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             $client->GetApiVersion()
         );
     }
+
+    public function testSetApiEndpoint()
+    {
+        $client = new Client(1, 2);
+        $client->SetApiEndpoint('http://api.datatrics.com');
+        $this->assertEquals(
+            'http://api.datatrics.com',
+            $client->GetApiEndpoint()
+        );
+    }
+
+    public function testGetApiEndpoint()
+    {
+        $client = new Client(1, 2);
+        $this->assertEquals(
+            'https://api.datatrics.com',
+            $client->GetApiEndpoint()
+        );
+    }
 }
