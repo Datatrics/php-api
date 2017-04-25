@@ -111,10 +111,9 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             'GET',
             $request->getMethod()
         );
-        $header = $request->getHeader('x-apikey');
         $this->assertEquals(
             '1',
-            $header[0]
+            $request->getHeader('x-apikey')[0]
         );
     }
 
