@@ -36,7 +36,7 @@ class Scorecard extends Base
      */
     public function Create($scorecard)
     {
-        return $this->GetClient()->Post($this->GetClient(), $scorecard);
+        return $this->GetClient()->Post($this->GetUrl(), $scorecard);
     }
 
     /**
@@ -46,7 +46,7 @@ class Scorecard extends Base
      */
     public function Delete($scorecardId)
     {
-        return $this->GetClient()->Delete($this->GetClient()."/".$scorecardId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$scorecardId);
     }
 
     /**
@@ -61,6 +61,6 @@ class Scorecard extends Base
             throw new \Exception("Maximum of 50 scorecards allowed at a time");
         }
 
-        return $this->GetClient()->Post($this->GetClient()."/bulk", ['items' => $scorecards]);
+        return $this->GetClient()->Post($this->GetUrl()."/bulk", ['items' => $scorecards]);
     }
 }

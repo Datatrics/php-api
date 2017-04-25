@@ -7,8 +7,7 @@ class Profile extends Base
 {
     /**
      * Private constructor so only the client can create this
-     * @param string $apikey
-     * @param string $projectid
+     * @param Client $client
      */
     public function __construct(Client $client)
     {
