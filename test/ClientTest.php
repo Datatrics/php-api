@@ -102,9 +102,19 @@ class ClientTest extends \PHPUnit\Framework\TestCase
     public function testBuildRequest()
     {
         $Client = new Client(1, 2);
+        $request = $header = $Client->BuildRequest('GET', '/test', []);
         $this->assertEquals(
             'https://api.datatrics.com/2.0/test',
-            $Client->BuildRequest('GET', '/test', [])->getUri()
+            $request->getUri()
+        );
+        $this->assertEquals(
+            'GET',
+            $request->getMethod()
+        );
+        $header = $request->getHeader('x-apikey');
+        $this->assertEquals(
+            '1',
+            $header[0]
         );
     }
 
