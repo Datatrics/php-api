@@ -102,7 +102,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
     public function testBuildRequest()
     {
         $Client = new Client(1, 2);
-        $request = $header = $Client->BuildRequest('GET', '/test', []);
+        $request = $Client->BuildRequest('GET', '/test', []);
         $this->assertEquals(
             'https://api.datatrics.com/2.0/test',
             $request->getUri()
@@ -115,6 +115,14 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             '1',
             $request->getHeader('x-apikey')[0]
         );
+    }
+
+    public function testSendRequest()
+    {
+        $Client = new Client(1, 2);
+        $this->expectExceptionMessage('Not Found');
+        $this->expectExceptionCode(404);
+        $Client->SendRequest('GET', '/test', []);
     }
 
     public function testGetUrl()
@@ -151,6 +159,6 @@ class ClientTest extends \PHPUnit\Framework\TestCase
     {
         $Client = new Client(1, 2);
         $this->expectExceptionCode(404);
-        $Client->Put("/base", []);
+        $Client->Delete("/base", []);
     }
 }

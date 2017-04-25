@@ -22,7 +22,7 @@ class Apikey extends Base
      */
     public function Get($args = array("limit" => 50))
     {
-        return $this->request(Client::HTTP_GET, $this->GetUrl(), $args);
+        return $this->getClient()->Get($this->GetUrl(), $args);
     }
 
     /**
@@ -32,6 +32,6 @@ class Apikey extends Base
      */
     public function Create($apikey)
     {
-        return $this->request(Client::HTTP_POST, $this->GetUrl(), $apikey);
+        return $this->getClient()->Post($this->GetUrl(), $apikey);
     }
 }
