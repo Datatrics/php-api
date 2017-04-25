@@ -35,67 +35,88 @@ class ClientTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetApiKey()
     {
-        $client = new Client(1, 2);
+        $Client = new Client(1, 2);
         $this->assertEquals(
             '1',
-            $client->GetApiKey()
+            $Client->GetApiKey()
         );
     }
 
     public function testGetProjectId()
     {
-        $client = new Client(1, 2);
+        $Client = new Client(1, 2);
         $this->assertEquals(
             '2',
-            $client->GetProjectId()
+            $Client->GetProjectId()
         );
     }
 
     public function testSetApiKey()
     {
-        $client = new Client(1, 2);
-        $client->SetApiKey(3);
+        $Client = new Client(1, 2);
+        $Client->SetApiKey(3);
         $this->assertEquals(
             '3',
-            $client->getApiKey()
+            $Client->getApiKey()
         );
     }
 
     public function testSetProjectId()
     {
-        $client = new Client(1, 2);
-        $client->SetProjectId(4);
+        $Client = new Client(1, 2);
+        $Client->SetProjectId(4);
         $this->assertEquals(
             '4',
-            $client->GetProjectId()
+            $Client->GetProjectId()
         );
     }
 
     public function testGetApiVersion()
     {
-        $client = new Client(1, 2);
+        $Client = new Client(1, 2);
         $this->assertEquals(
             '2.0',
-            $client->GetApiVersion()
+            $Client->GetApiVersion()
         );
     }
 
     public function testSetApiEndpoint()
     {
-        $client = new Client(1, 2);
-        $client->SetApiEndpoint('http://api.datatrics.com');
+        $Client = new Client(1, 2);
+        $Client->SetApiEndpoint('http://api.datatrics.com');
         $this->assertEquals(
             'http://api.datatrics.com',
-            $client->GetApiEndpoint()
+            $Client->GetApiEndpoint()
         );
     }
 
     public function testGetApiEndpoint()
     {
-        $client = new Client(1, 2);
+        $Client = new Client(1, 2);
         $this->assertEquals(
             'https://api.datatrics.com',
-            $client->GetApiEndpoint()
+            $Client->GetApiEndpoint()
         );
     }
+
+    public function testBuildRequest()
+    {
+        $Client = new Client(1, 2);
+        $this->assertEquals(
+            'https://api.datatrics.com/2.0/test',
+            $Client->BuildRequest('GET', '/test', [])->getUri()
+        );
+    }
+
+    public function testGetUrl()
+    {
+        $Client = new Client(1, 2);
+        $this->assertEquals(
+            'https://api.datatrics.com/2.0/test',
+            $Client->GetUrl('/test', [])
+        );
+    }
+
+
+
 }
