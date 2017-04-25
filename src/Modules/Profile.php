@@ -44,9 +44,9 @@ class Profile extends Base
      * @param string Id of the profile to be deleted
      * @return object Result of the request
      */
-    public function Delete($profileid)
+    public function Delete($profileId)
     {
-        return $this->GetClient()->Delete($this->GetUrl()."/".profileid);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$profileId);
     }
 
     /**
