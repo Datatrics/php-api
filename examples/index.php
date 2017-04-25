@@ -2,8 +2,8 @@
 
 require_once(__DIR__."/../vendor/autoload.php");
 
-$apiKey = 'cda6147aecdd40a7ba413db94fbf2742';
-$projectId = '255418';
+$apiKey = '';
+$projectId = '';
 
 $api = new Datatrics\API\Client($apiKey, $projectId);
 $project = $api->Project->Get('255418');
