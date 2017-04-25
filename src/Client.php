@@ -456,19 +456,18 @@ class Client
             $response = $this->GetHttpClient()->send($request);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             if($e->hasResponse()) {
-                $response = json_decode($e->getResponse()->getBody(), true);
-                if(isset($response['error'])){
-                    throw new \Exception($response['error']['message'], $e->getResponse()->getStatusCode());
-                }
-                if(isset($response['message'])){
-                    throw new \Exception($response['message'], $e->getResponse()->getStatusCode());
-                }
+                $body = json_decode($e->getResponse()->getBody(), true);
+                throw new \Exception($body['error']['message'], $e->getResponse()->getStatusCode());
             }
             throw $e;
         } catch (\Exception $e) {
             throw $e;
         }
-        return json_decode($response->getBody(), true);
+        $body = json_decode($response->getBody(), true);
+        if ($error = json_last_error_msg()) {
+            throw new \Exception($error);
+        }
+        return $body;
     }
 
     /**
