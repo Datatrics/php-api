@@ -1,11 +1,21 @@
 image: php:7.0
+cache:
+  paths:
+    - vendor/
 before_script:
-    - bash ci/docker_install.sh > /dev/null
+  - apt-get update -yqq
+  - apt-get install git -yqq
+  - docker-php-ext-install pdo_mysql
+  - curl -sS https://getcomposer.org/installer | php
+  - php composer.phar install
 test:7.0:
-    image: php:7.0
-    script:
-        - phpunit --configuration phpunit.xml
+  image: php:7.0
+  script:
+    - phpunit --configuration phpunit.xml --coverage-text
+  allow_failure: true
 test:7.1:
-    image: php:7.1
-    script:
-        - phpunit --configuration phpunit.xml
+  image: php:7.1
+  script:
+    - phpunit --configuration phpunit.xml --coverage-text
+  allow_failure: true
+

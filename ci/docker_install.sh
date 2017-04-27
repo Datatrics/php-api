@@ -14,9 +14,6 @@ curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.
 chmod +x /usr/local/bin/phpunit
 
 #install composer
-curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar
-
-
 EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
