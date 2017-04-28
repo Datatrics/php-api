@@ -4,18 +4,20 @@ cache:
     - vendor/
 before_script:
   - apt-get update -yqq
-  - apt-get install git zlib -yqq
+  - apt-get install git zlib1g zlib1g-dbg zlib1g-dev zlibc -yqq
+  - pecl install xdebug
   - docker-php-ext-install zip
+  - docker-php-ext-enable xdebug
   - curl -sS https://getcomposer.org/installer | php
-  - php composer.phar install
+  - php composer.phar install --optimize-autoloader
 test:7.0:
   image: php:7.0
   script:
-    - phpunit --configuration phpunit.xml --coverage-text
+    - vendor/bin/phpunit --configuration phpunit.xml --coverage-text
   allow_failure: true
 test:7.1:
   image: php:7.1
   script:
-    - phpunit --configuration phpunit.xml --coverage-text
+    - vendor/bin/phpunit --configuration phpunit.xml --coverage-text
   allow_failure: true
 
