@@ -1,0 +1,23 @@
+image: php:7.0
+cache:
+  paths:
+    - vendor/
+before_script:
+  - apt-get update -yqq
+  - apt-get install git zlib1g zlib1g-dbg zlib1g-dev zlibc -yqq
+  - pecl install xdebug
+  - docker-php-ext-install zip
+  - docker-php-ext-enable xdebug
+  - curl -sS https://getcomposer.org/installer | php
+  - php composer.phar install --optimize-autoloader
+test:7.0:
+  image: php:7.0
+  script:
+    - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never 
+  allow_failure: true
+test:7.1:
+  image: php:7.1
+  script:
+    - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
+  allow_failure: true
+
