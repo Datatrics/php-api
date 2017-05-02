@@ -8,7 +8,5 @@ composer.lock
 *.sln
 *.suo
 /.vs
-phpunit-4.0.20.phar
 coverage.clover
 /build/logs/clover.xml
-ocular.phar
