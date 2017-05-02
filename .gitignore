@@ -1,7 +1,7 @@
 vendor/
 bin/
+build/
 composer.phar
-composer.lock
 .idea/
 .php_cs.cache
 *.phpproj
