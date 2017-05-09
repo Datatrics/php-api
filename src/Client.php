@@ -457,7 +457,7 @@ class Client
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             if ($e->hasResponse()) {
                 $body = json_decode($e->getResponse()->getBody(), true);
-                throw new \Exception($body['error']['message'], $e->getResponse()->getStatusCode());
+                throw new \Exception($body['message'], $e->getResponse()->getStatusCode());
             }
             throw $e;
         } catch (\Exception $e) {
