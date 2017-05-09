@@ -464,8 +464,8 @@ class Client
             throw $e;
         }
         $body = json_decode($response->getBody(), true);
-        if ($error = json_last_error_msg()) {
-            throw new \Exception($error);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception(json_last_error_msg());
         }
         return $body;
     }
