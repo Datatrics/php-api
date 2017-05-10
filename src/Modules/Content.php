@@ -90,15 +90,16 @@ class Content extends Base
     /**
      * Updates a maximum of 50 content items at a time.
      * @param array Containing content items with a maximum of 50
+     * @param string Containg type of content items, items or categories
      * @throws \Exception When more that 50 content items are provided
      * @return object Result of the request
      */
-    public function Bulk($items)
+    public function Bulk($items, $type = 'items')
     {
         if (count($items) > 50) {
             throw new \Exception("Maximum of 50 content items allowed at a time");
         }
 
-        return $this->GetClient()->Post($this->GetUrl()."/bulk", ['items' => $items]);
+        return $this->GetClient()->Post($this->GetUrl()."/bulk", ['items' => $items, 'type' => $type]);
     }
 }
