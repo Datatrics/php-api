@@ -22,7 +22,7 @@ class Behavior extends Base
      */
     public function Get($args = array("limit" => 50))
     {
-        return $this->request(Client::HTTP_GET, $this->GetUrl(), $args);
+        return $this->GetClient()->Get($this->GetUrl(), $args);
     }
 
     /**
@@ -32,7 +32,7 @@ class Behavior extends Base
      */
     public function GetVisit($args = array("limit" => 50))
     {
-        return $this->request(Client::HTTP_GET, $this->GetUrl()."/visit", $args);
+        return $this->GetClient()->Get($this->GetUrl()."/visit", $args);
     }
 
     /**
@@ -44,9 +44,9 @@ class Behavior extends Base
     public function GetEvent($eventId = null, $args = array("limit" => 50))
     {
         if (is_null($eventId)) {
-            return $this->request(Client::HTTP_GET, $this->GetUrl()."/event", $args);
+            return $this->GetClient()->Get($this->GetUrl()."/event", $args);
         }
-        return $this->request(Client::HTTP_GET, $this->GetUrl()."/event/".$eventId, $args);
+        return $this->GetClient()->Get($this->GetUrl()."/event/".$eventId, $args);
     }
 
     /**
@@ -56,7 +56,7 @@ class Behavior extends Base
      */
     public function CreateEvent($event)
     {
-        return $this->request(Client::HTTP_POST, $this->GetUrl()."/event", $event);
+        return $this->GetClient()->Post($this->GetUrl()."/event", $event);
     }
 
     /**
@@ -71,7 +71,7 @@ class Behavior extends Base
             throw new \Exception("event must contain a eventid");
         }
 
-        return $this->request(Client::HTTP_PUT, $this->GetUrl()."/event/".$event['eventid'], $event);
+        return $this->GetClient()->Put($this->GetUrl()."/event/".$event['eventid'], $event);
     }
 
     /**
@@ -85,6 +85,6 @@ class Behavior extends Base
         if (count($events) > 50) {
             throw new \Exception("Maximum of 50 events allowed at a time");
         }
-        return $this->request(Client::HTTP_POST, $this->GetUrl()."/event/bulk", ['items' => $events]);
+        return $this->GetClient()->Post($this->GetUrl()."/event/bulk", ['items' => $events]);
     }
 }

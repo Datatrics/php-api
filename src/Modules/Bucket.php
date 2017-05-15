@@ -51,7 +51,7 @@ class Bucket extends Base
      */
     public function Create($bucket)
     {
-        return $this->request(self::HTTP_POST, "", $bucket);
+        return $this->GetClient()->Post($this->GetUrl(), $bucket);
     }
 
     /**
