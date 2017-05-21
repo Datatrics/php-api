@@ -64,12 +64,22 @@ class Touchpoint extends Base
     }
 
     /**
-     * Delete a touchpoint object by touchpoint id
+     * Retrieve stats a touchpoint object by touchpoint id
      * @param string Id of the touchpoint
      * @return object Result of the request
      */
     public function Stats($touchpointId, $args = [])
     {
         return $this->GetClient()->Get($this->GetUrl()."/".$touchpointId."/stats", $args);
+    }
+
+    /**
+     * Retrieve content of a touchpoint object by touchpoint id
+     * @param string Id of the touchpoint
+     * @return object Result of the request
+     */
+    public function Content($touchpointId, $args = [])
+    {
+        return $this->GetClient()->Get($this->GetUrl()."/".$touchpointId."/content", $args);
     }
 }
