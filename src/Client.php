@@ -4,6 +4,7 @@ namespace Datatrics\API;
 use GuzzleHttp\Client as HttpClient;
 use Datatrics\API\Modules\Apikey;
 use Datatrics\API\Modules\Behavior;
+use Datatrics\API\Modules\Billing;
 use Datatrics\API\Modules\Box;
 use Datatrics\API\Modules\Bucket;
 use Datatrics\API\Modules\Campaign;
@@ -21,6 +22,7 @@ use Datatrics\API\Modules\Project;
 use Datatrics\API\Modules\Sale;
 use Datatrics\API\Modules\Scorecard;
 use Datatrics\API\Modules\Segment;
+use Datatrics\API\Modules\Subscription;
 use Datatrics\API\Modules\Template;
 use Datatrics\API\Modules\Theme;
 use Datatrics\API\Modules\Touchpoint;
@@ -94,6 +96,11 @@ class Client
      * @var Behavior
      */
     public $Behavior;
+
+    /**
+     * @var Billing
+     */
+    public $Billing;
 
     /**
      * @var Box
@@ -179,6 +186,11 @@ class Client
      * @var Segment
      */
     public $Segment;
+
+    /**
+     * @var Segment
+     */
+    public $Subscription;
 
     /**
      * @var Template
@@ -325,6 +337,7 @@ class Client
     {
         $this->Apikey = new Apikey($this);
         $this->Behavior = new Behavior($this);
+        $this->Billing = new Billing($this);
         $this->Box = new Box($this);
         $this->Bucket = new Bucket($this);
         $this->Campaign = new Campaign($this);
@@ -342,6 +355,7 @@ class Client
         $this->Sale = new Sale($this);
         $this->Scorecard = new Scorecard($this);
         $this->Segment = new Segment($this);
+        $this->Subscription = new Subscription($this);
         $this->Template = new Template($this);
         $this->Theme = new Theme($this);
         $this->Touchpoint = new Touchpoint($this);
