@@ -188,7 +188,7 @@ class Client
     public $Segment;
 
     /**
-     * @var Segment
+     * @var Subscription
      */
     public $Subscription;
 
