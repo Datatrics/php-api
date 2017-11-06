@@ -60,7 +60,13 @@ class Base
         return $this;
     }
 
-    public function request($method, $url = "", $payload = [])
+    /**
+     * @param $method
+     * @param string $url
+     * @param array $payload
+     * @return mixed
+     */
+    public function request($method, $url = "", $payload = array())
     {
         if (empty($url)) {
             $url = $this->GetUrl();

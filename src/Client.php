@@ -1,7 +1,6 @@
 <?php
 namespace Datatrics\API;
 
-use GuzzleHttp\Client as HttpClient;
 use Datatrics\API\Modules\Apikey;
 use Datatrics\API\Modules\Behavior;
 use Datatrics\API\Modules\Billing;
@@ -31,7 +30,6 @@ use Datatrics\API\Modules\Tric;
 use Datatrics\API\Modules\Trigger;
 use Datatrics\API\Modules\User;
 use Datatrics\API\Modules\Webhook;
-use GuzzleHttp\Psr7\Request;
 
 class Client
 {
@@ -76,11 +74,6 @@ class Client
      * @var string
      */
     private $_api_key;
-
-    /**
-     * @var HttpClient
-     */
-    private $_http_client;
 
     /**
      * @var string
@@ -242,7 +235,6 @@ class Client
     {
         $this->SetApiKey($apiKey);
         $this->SetProjectId($projectId);
-        $this->SetHttpClient();
         $this->_RegisterModules();
     }
 
@@ -275,7 +267,6 @@ class Client
     public function SetApiEndpoint($api_endpoint)
     {
         $this->_api_endpoint = $api_endpoint;
-        $this->SetHttpClient();
         $this->_RegisterModules();
         return $this;
     }
@@ -299,7 +290,6 @@ class Client
     public function SetApiKey($api_key)
     {
         $this->_api_key = $api_key;
-        $this->SetHttpClient();
         $this->_RegisterModules();
         return $this;
     }
@@ -323,7 +313,6 @@ class Client
     public function SetProjectId($projectId)
     {
         $this->_projectId = $projectId;
-        $this->SetHttpClient();
         $this->_RegisterModules();
         return $this;
     }
@@ -367,34 +356,11 @@ class Client
     }
 
     /**
-     * Setup the HTTP Client
-     *
-     * @return Client
-     */
-    private function SetHttpClient()
-    {
-        $config = [
-            'base-uri' => $this->GetApiEndpoint(),
-            'headers' => $this->_GetHttpClientHeaders()
-        ];
-        $this->_http_client = new HttpClient($config);
-        return $this;
-    }
-
-    /**
-     * @return HttpClient
-     */
-    private function GetHttpClient()
-    {
-        return $this->_http_client;
-    }
-
-    /**
      * Define the HTTP headers
      *
      * @return array
      */
-    private function _GetHttpClientHeaders()
+    private function _GetHttpHeaders()
     {
         $user_agent = 'Datatrics/API '.self::CLIENT_VERSION;
         return [
@@ -424,7 +390,7 @@ class Client
      * @param null|array $payload
      * @return string
      */
-    public function GetUrl($url, $payload = [])
+    public function GetUrl($url, $payload = array())
     {
         $url = $this->GetApiEndpoint()."/".$this->GetApiVersion().$url;
         if (count($payload)) {
@@ -437,22 +403,39 @@ class Client
      * @param string $method    HTTP Method
      * @param string $url       The url
      * @param array $payload    The Payload
-     * @return Request
+     * @throws \Exception
+     * @return array
      */
-    public function BuildRequest($method, $url, $payload = [])
+    public function BuildRequest($method, $url, $payload = array())
     {
-        $body = null;
-        if ($method == self::HTTP_GET) {
-            $url = $this->GetUrl($url, $payload);
-        } elseif ($method == self::HTTP_DELETE) {
-            $url = $this->GetUrl($url, $payload);
-        } else {
-            $url = $this->GetUrl($url);
-            if (count($payload)) {
-                $body = json_encode($payload);
+        if($method == self::HTTP_POST || $method == self::HTTP_PUT){
+            if (!$payload || !is_array($payload))
+            {
+                throw new \Exception('Invalid payload', 100);
             }
+            $curlOptions = array(
+                CURLOPT_URL           => $this->getUrl($url),
+                CURLOPT_CUSTOMREQUEST => strtoupper($method),
+                CURLOPT_POSTFIELDS    => json_encode($payload),
+            );
+        }elseif($method == self::HTTP_DELETE){
+            $curlOptions = array(
+                CURLOPT_URL           => $this->getUrl($url),
+                CURLOPT_CUSTOMREQUEST => self::HTTP_DELETE,
+            );
+        }else{
+            $curlOptions = array(
+                CURLOPT_URL => $this->getUrl($url, $payload),
+                CURLOPT_CUSTOMREQUEST => strtoupper($method)
+            );
         }
-        return new Request($method, $url, $this->_GetHttpClientHeaders(), $body);
+
+        $curlOptions += array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_HTTPHEADER      => $this->_GetHttpHeaders()
+        );
+        return $curlOptions;
     }
 
     /**
@@ -462,29 +445,34 @@ class Client
      * @return mixed
      * @throws \Exception
      */
-    public function SendRequest($method, $url, $payload = [])
+    public function SendRequest($method, $url, $payload = array())
     {
         $this->CheckApiKey();
-        $request = $this->BuildRequest($method, $url, $payload);
-        try {
-            $response = $this->GetHttpClient()->send($request);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            if ($e->hasResponse()) {
-                $body = json_decode($e->getResponse()->getBody(), true);
-                if (isset($body['error']['message'])) {
-                    throw new \Exception($body['error']['message'], $e->getResponse()->getStatusCode());
-                }
-                throw new \Exception($body['message'], $e->getResponse()->getStatusCode());
-            }
-            throw $e;
-        } catch (\Exception $e) {
-            throw $e;
+        $curlOptions = $this->BuildRequest($method, $url, $payload);
+        $curlHandle = curl_init();
+        curl_setopt_array($curlHandle, $curlOptions);
+        $responseBody = curl_exec($curlHandle);
+        if (curl_errno($curlHandle))
+        {
+            throw new \Exception('Curl error: ' . curl_error($curlHandle), curl_errno($curlHandle));
         }
-        $body = json_decode($response->getBody(), true);
+        $responseBody = json_decode($responseBody, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception(json_last_error_msg());
         }
-        return $body;
+        $responseCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        curl_close($curlHandle);
+        if ($responseCode < 200 || $responseCode > 299)
+        {
+            if($responseBody && array_key_exists('error', $responseBody)){
+                throw new \Exception($responseBody['error']['message'], $responseCode);
+            }
+            if($responseBody && array_key_exists('message', $responseBody)){
+                throw new \Exception($responseBody['message'], $responseCode);
+            }
+            throw new \Exception('Something went wrong');
+        }
+        return $responseBody;
     }
 
     /**
@@ -492,7 +480,7 @@ class Client
      * @param array $payload
      * @return mixed
      */
-    public function Post($url, $payload = [])
+    public function Post($url, $payload = array())
     {
         return $this->SendRequest(self::HTTP_POST, $url, $payload);
     }
@@ -502,7 +490,7 @@ class Client
      * @param array $payload
      * @return mixed
      */
-    public function Get($url, $payload = [])
+    public function Get($url, $payload = array())
     {
         return $this->SendRequest(self::HTTP_GET, $url, $payload);
     }
@@ -512,7 +500,7 @@ class Client
      * @param array $payload
      * @return mixed
      */
-    public function Put($url, $payload = [])
+    public function Put($url, $payload = array())
     {
         return $this->SendRequest(self::HTTP_PUT, $url, $payload);
     }
@@ -522,7 +510,7 @@ class Client
      * @param array $payload
      * @return mixed
      */
-    public function Delete($url, $payload = [])
+    public function Delete($url, $payload = array())
     {
         return $this->SendRequest(self::HTTP_DELETE, $url, $payload);
     }

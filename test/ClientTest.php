@@ -105,15 +105,15 @@ class ClientTest extends \PHPUnit\Framework\TestCase
         $request = $Client->BuildRequest('GET', '/test', []);
         $this->assertEquals(
             'https://api.datatrics.com/2.0/test',
-            $request->getUri()
+            $request[CURLOPT_URL]
         );
         $this->assertEquals(
             'GET',
-            $request->getMethod()
+            $request[CURLOPT_CUSTOMREQUEST]
         );
         $this->assertEquals(
             '1',
-            $request->getHeader('x-apikey')[0]
+            $request[CURLOPT_HTTPHEADER]['x-apikey']
         );
     }
 
@@ -130,7 +130,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
         $Client = new Client(1, 2);
         $this->assertEquals(
             'https://api.datatrics.com/2.0/test',
-            $Client->GetUrl('/test', [])
+            $Client->GetUrl('/test')
         );
     }
 
