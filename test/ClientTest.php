@@ -138,21 +138,21 @@ class ClientTest extends \PHPUnit\Framework\TestCase
     {
         $Client = new Client(1, 2);
         $this->expectExceptionCode(404);
-        $Client->Post("/base", []);
+        $Client->Post("/base", ['test'=>1]);
     }
 
     public function testGetException()
     {
         $Client = new Client(1, 2);
         $this->expectExceptionCode(404);
-        $Client->Get("/base", []);
+        $Client->Get("/base", ['test'=>1]);
     }
 
     public function testPutException()
     {
         $Client = new Client(1, 2);
         $this->expectExceptionCode(404);
-        $Client->Put("/base", []);
+        $Client->Put("/base", ['test'=>1]);
     }
 
     public function testDeleteException()

@@ -34,18 +34,18 @@ use Datatrics\API\Modules\Webhook;
 
 class ModuleApikeyTest extends \PHPUnit\Framework\TestCase
 {
-//    public function testGetExceptionCode()
-//    {
-//        $Client = new Client(1, 2);
-//        $this->expectExceptionCode(403);
-//        var_dump($Client->Apikey->Get());
-//    }
-//
-//    public function testCreateExceptionCode()
-//    {
-//        $Client = new Client(1, 2);
-//        $this->expectExceptionCode(403);
-//        $ApiKey = [];
-//        var_dump($Client->Apikey->Create($ApiKey));
-//    }
+    public function testGetExceptionCode()
+    {
+        $Client = new Client(1, 2);
+        $this->expectExceptionCode(401);
+        var_dump($Client->Apikey->Get());
+    }
+
+    public function testCreateExceptionCode()
+    {
+        $Client = new Client(1, 2);
+        $this->expectExceptionCode(401);
+        $ApiKey = ['test'=>1];
+        var_dump($Client->Apikey->Create($ApiKey));
+    }
 }
