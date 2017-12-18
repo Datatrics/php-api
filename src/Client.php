@@ -364,12 +364,12 @@ class Client
     {
         $user_agent = 'Datatrics/API '.self::CLIENT_VERSION;
         return [
-            'accept' => 'application/json',
-            'content-type' => 'application/json',
-            'user-agent' => $user_agent,
-            'x-apikey' => $this->GetApiKey(),
-            'x-client-name' => $user_agent,
-            'x-datatrics-client-info' => php_uname()
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'User-Agent' => $user_agent,
+            'X-apikey: '. $this->GetApiKey(),
+            'X-client-name: '. $user_agent,
+            'X-datatrics-client-info: '. php_uname()
         ];
     }
 
@@ -408,16 +408,19 @@ class Client
      */
     public function BuildRequest($method, $url, $payload = array())
     {
+        $headers = $this->_GetHttpHeaders();
         if($method == self::HTTP_POST || $method == self::HTTP_PUT){
             if (!$payload || !is_array($payload))
             {
                 throw new \Exception('Invalid payload', 100);
             }
+            $payload = json_encode($payload);
             $curlOptions = array(
                 CURLOPT_URL           => $this->getUrl($url),
                 CURLOPT_CUSTOMREQUEST => strtoupper($method),
-                CURLOPT_POSTFIELDS    => json_encode($payload),
+                CURLOPT_POSTFIELDS    => $payload
             );
+            $headers['Content-Length'] = strlen($payload);
         }elseif($method == self::HTTP_DELETE){
             $curlOptions = array(
                 CURLOPT_URL           => $this->getUrl($url),
@@ -433,7 +436,7 @@ class Client
         $curlOptions += array(
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_HTTPHEADER      => $this->_GetHttpHeaders()
+            CURLOPT_HTTPHEADER      => $headers
         );
         return $curlOptions;
     }
