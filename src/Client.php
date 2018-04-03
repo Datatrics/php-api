@@ -423,7 +423,7 @@ class Client
             $headers['Content-Length'] = strlen($payload);
         }elseif($method == self::HTTP_DELETE){
             $curlOptions = array(
-                CURLOPT_URL           => $this->getUrl($url),
+                CURLOPT_URL           => $this->getUrl($url, $payload),
                 CURLOPT_CUSTOMREQUEST => self::HTTP_DELETE,
             );
         }else{
