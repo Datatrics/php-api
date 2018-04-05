@@ -459,11 +459,15 @@ class Client
         {
             throw new \Exception('Curl error: ' . curl_error($curlHandle), curl_errno($curlHandle));
         }
-        $responseBody = json_decode($responseBody, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception(json_last_error_msg());
-        }
         $responseCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        if ($responseCode == 204){
+            $responseBody = null;
+        }else{
+            $responseBody = json_decode($responseBody, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception(json_last_error_msg());
+            }
+        }
         curl_close($curlHandle);
         if ($responseCode < 200 || $responseCode > 299)
         {
