@@ -45,7 +45,7 @@ require_once '/path/to/Client.php';
 ```
 
 ## Usage
-There are a lot of API resources that are accessible through this client. You can look them up by looking at the code. Their name matches the name in the documentation(https://doc-beta.datatrics.com).
+There are a lot of API resources that are accessible through this client. You can look them up by looking at the code. Their name matches the name in the documentation(https://docs.datatrics.com).
 
 ``` php
 <?php
