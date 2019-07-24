@@ -60,7 +60,7 @@ class Profile extends Base
         if (!isset($profile['profileid'])) {
             throw new \Exception("profile must contain a profileid");
         }
-        return $this->GetClient()->Post($this->GetUrl()."/".$profile['profileid'], $profile);
+        return $this->GetClient()->Put($this->GetUrl()."/".$profile['profileid'], $profile);
     }
 
     /**
