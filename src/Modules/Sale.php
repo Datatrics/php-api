@@ -47,7 +47,7 @@ class Sale extends Base
      */
     public function Delete($saleId, $args = array())
     {
-        return $this->GetClient()->Delete($this->GetUrl()."/".$saleId);
+        return $this->GetClient()->Delete($this->GetUrl()."/".$saleId, $args);
     }
 
     /**
