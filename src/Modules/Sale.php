@@ -42,9 +42,10 @@ class Sale extends Base
     /**
      * Delete a sale object by sale id
      * @param string Id of the sale
+     * @param object Containing query arguments
      * @return object Result of the request
      */
-    public function Delete($saleId)
+    public function Delete($saleId, $args = array())
     {
         return $this->GetClient()->Delete($this->GetUrl()."/".$saleId);
     }
