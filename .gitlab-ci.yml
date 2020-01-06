@@ -13,11 +13,11 @@ before_script:
 test:7.0:
   image: php:7.0
   script:
-    - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never 
+    - composer test
   allow_failure: true
 test:7.1:
   image: php:7.1
   script:
-    - vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
+    - composer test
   allow_failure: true
 

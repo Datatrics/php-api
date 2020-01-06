@@ -1,32 +1,56 @@
 {
 	"name": "datatrics/php-api",
 	"description": "Datattrics API client",
+	"type": "library",
 	"keywords": ["datatrics", "datatrics.com", "api", "php-api", "php-sdk"],
 	"license": "MIT",
-	"authors": [{
+	"authors": [
+		{
 		"name": "Nico Borghuis",
 		"email": "nico@datatrics.com"
-	}, {
+		},
+		{
 		"name": "Bas Nieland",
 		"email": "bas@datatrics.com"
-	}, {
+		},
+		{
 		"name": "Pepijn Yben",
 		"email": "pepijn@datatrics.com"
-	}],
+		}
+	],	
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        }
+    },
 	"autoload": {
 		"psr-4": {
-			"Datatrics\\API\\": ["src/","test/"]
+			"Datatrics\\API\\": "src/"
 		}
-	},
+	},	
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
 	"require": {
 		"php": ">=5.6",
 		"ext-json": "*"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "5.7.*",
-		"phpunit/php-token-stream": "1.4.*",
-		"codeclimate/php-test-reporter": "@stable",
-		"phpmd/phpmd" : "@stable",
-		"squizlabs/php_codesniffer": "3.1.*"
-	}
+		"friendsofphp/php-cs-fixer": "^2.15",
+        "php-coveralls/php-coveralls": "^2.0",
+        "phpunit/phpunit": "^7.0"
+	},
+	"scripts": {
+        "format": [
+            "vendor/bin/php-cs-fixer fix"
+        ],
+        "test": [
+            "vendor/bin/phpunit"
+        ]
+    }
 }

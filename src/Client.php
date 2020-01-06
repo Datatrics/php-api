@@ -409,9 +409,8 @@ class Client
     public function BuildRequest($method, $url, $payload = array())
     {
         $headers = $this->_GetHttpHeaders();
-        if($method == self::HTTP_POST || $method == self::HTTP_PUT){
-            if (!$payload || !is_array($payload))
-            {
+        if ($method == self::HTTP_POST || $method == self::HTTP_PUT) {
+            if (!$payload || !is_array($payload)) {
                 throw new \Exception('Invalid payload', 100);
             }
             $payload = json_encode($payload);
@@ -421,12 +420,12 @@ class Client
                 CURLOPT_POSTFIELDS    => $payload
             );
             $headers['Content-Length'] = strlen($payload);
-        }elseif($method == self::HTTP_DELETE){
+        } elseif ($method == self::HTTP_DELETE) {
             $curlOptions = array(
                 CURLOPT_URL           => $this->getUrl($url, $payload),
                 CURLOPT_CUSTOMREQUEST => self::HTTP_DELETE,
             );
-        }else{
+        } else {
             $curlOptions = array(
                 CURLOPT_URL => $this->getUrl($url, $payload),
                 CURLOPT_CUSTOMREQUEST => strtoupper($method)
@@ -455,26 +454,24 @@ class Client
         $curlHandle = curl_init();
         curl_setopt_array($curlHandle, $curlOptions);
         $responseBody = curl_exec($curlHandle);
-        if (curl_errno($curlHandle))
-        {
+        if (curl_errno($curlHandle)) {
             throw new \Exception('Curl error: ' . curl_error($curlHandle), curl_errno($curlHandle));
         }
         $responseCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-        if ($responseCode == 204){
+        if ($responseCode == 204) {
             $responseBody = null;
-        }else{
+        } else {
             $responseBody = json_decode($responseBody, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new \Exception(json_last_error_msg());
             }
         }
         curl_close($curlHandle);
-        if ($responseCode < 200 || $responseCode > 299)
-        {
-            if($responseBody && array_key_exists('error', $responseBody)){
+        if ($responseCode < 200 || $responseCode > 299) {
+            if ($responseBody && array_key_exists('error', $responseBody)) {
                 throw new \Exception($responseBody['error']['message'], $responseCode);
             }
-            if($responseBody && array_key_exists('message', $responseBody)){
+            if ($responseBody && array_key_exists('message', $responseBody)) {
                 throw new \Exception($responseBody['message'], $responseCode);
             }
             throw new \Exception('Something went wrong');

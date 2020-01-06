@@ -1,6 +1,6 @@
 <?php
 
-namespace Datatrics\API;
+declare(strict_types=1);
 
 use Datatrics\API\Client;
 use Datatrics\API\Modules\Apikey;
@@ -30,8 +30,9 @@ use Datatrics\API\Modules\Tric;
 use Datatrics\API\Modules\Trigger;
 use Datatrics\API\Modules\User;
 use Datatrics\API\Modules\Webhook;
+use PHPUnit\Framework\TestCase;
 
-class ClientTest extends \PHPUnit\Framework\TestCase
+final class ClientTest extends TestCase
 {
     public function testGetApiKey()
     {
@@ -112,8 +113,8 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             $request[CURLOPT_CUSTOMREQUEST]
         );
         $this->assertEquals(
-            '1',
-            $request[CURLOPT_HTTPHEADER]['x-apikey']
+            'X-apikey: 1',
+            $request[CURLOPT_HTTPHEADER][0]
         );
     }
 

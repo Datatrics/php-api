@@ -1,6 +1,6 @@
 <?php
 
-namespace Datatrics\API;
+declare(strict_types=1);
 
 use Datatrics\API\Client;
 use Datatrics\API\Modules\Base;
@@ -31,8 +31,9 @@ use Datatrics\API\Modules\Tric;
 use Datatrics\API\Modules\Trigger;
 use Datatrics\API\Modules\User;
 use Datatrics\API\Modules\Webhook;
+use PHPUnit\Framework\TestCase;
 
-class ModuleBaseTest extends \PHPUnit\Framework\TestCase
+final class ModuleBaseTest extends TestCase
 {
     public function testGetUrl()
     {
