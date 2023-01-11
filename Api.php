@@ -125,7 +125,7 @@ class Api
             if ($info['http_code'] >= 200 && $info['http_code'] < 300) {
                 return json_decode($data, true);
             } else {
-                throw new \Exception('HTTP Error', $info['http_code']);
+                throw new \Exception('PHP-API HTTP Error: '.$url, $info['http_code']);
             }
         }
 
